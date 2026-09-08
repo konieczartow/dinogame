@@ -3,3 +3,6 @@ __pycache__/
 .DS_Store
 Thumbs.db
 assets_generated/
+Claude outputs/
+figma_assets/
+mockups/

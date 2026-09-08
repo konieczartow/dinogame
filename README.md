@@ -5,7 +5,7 @@ Apka o dinozaurach dla 3-latka (iPad, PWA). Jeden plik `index.html` – bez fram
 ## Uruchomienie
 * **Na komputerze:** otwórz `index.html` w Chrome/Edge (klikanie myszą działa jak dotyk). Lektor wymaga polskiego głosu w systemie.
 * **Na iPadzie:** otwórz adres https apki w Safari → Udostępnij → „Do ekranu początkowego”. Działa offline po pierwszym uruchomieniu.
-* Panel rodzica: przytrzymaj **lewy górny róg** przez 3 sekundy.
+* Panel rodzica: przytrzymaj napis **„Dino Odkrywca”** na ekranie startowym przez 3 sekundy.
 
 ## Struktura
 ```

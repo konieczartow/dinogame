@@ -10,172 +10,208 @@
 <meta name="apple-mobile-web-app-title" content="Dino Odkrywca">
 <meta name="theme-color" content="#2F9E5B">
 <link rel="manifest" href="manifest.json">
-<link rel="apple-touch-icon" href="icons/icon-192.png">
+<link rel="apple-touch-icon" href="icons/icon-180.png">
 <link rel="icon" href="icons/icon-192.png">
 <style>
+/* ===== czcionka (własna kopia, działa offline) ===== */
+@font-face{font-family:"Fredoka";font-weight:500;src:url(fonts/fredoka-latin-ext-500-normal.woff2) format("woff2"),url(fonts/fredoka-latin-500-normal.woff2) format("woff2")}
+@font-face{font-family:"Fredoka";font-weight:600;src:url(fonts/fredoka-latin-ext-600-normal.woff2) format("woff2"),url(fonts/fredoka-latin-600-normal.woff2) format("woff2")}
+@font-face{font-family:"Fredoka";font-weight:700;src:url(fonts/fredoka-latin-ext-700-normal.woff2) format("woff2"),url(fonts/fredoka-latin-700-normal.woff2) format("woff2")}
+@font-face{font-family:"Fredoka";font-weight:500;unicode-range:U+0000-00FF;src:url(fonts/fredoka-latin-500-normal.woff2) format("woff2")}
+@font-face{font-family:"Fredoka";font-weight:600;unicode-range:U+0000-00FF;src:url(fonts/fredoka-latin-600-normal.woff2) format("woff2")}
+@font-face{font-family:"Fredoka";font-weight:700;unicode-range:U+0000-00FF;src:url(fonts/fredoka-latin-700-normal.woff2) format("woff2")}
+
+/* ===== tokeny z Figmy ===== */
+:root{--leaf:#2F9E5B;--leaf2:#1F7A44;--cream:#FFF3D1;--bark:#5B3A1F;--sun:#F5A524;--clay:#C4643A;--sand:#E9D6A8;--sky:#4FB2C7;
+  --lift:0 8px 0 rgba(91,58,31,.42),0 14px 20px -4px rgba(51,36,20,.12);--lift-down:0 2px 0 rgba(91,58,31,.42),0 6px 10px -4px rgba(51,36,20,.12)}
+
 /* ===== podstawy ===== */
 *{box-sizing:border-box;-webkit-tap-highlight-color:transparent;-webkit-touch-callout:none;-webkit-user-select:none;user-select:none}
-html,body{margin:0;height:100%;background:#1c2a20;overflow:hidden;touch-action:none;font-family:"Fredoka","Nunito","Segoe UI",system-ui,sans-serif}
-#stage{position:absolute;left:50%;top:50%;width:1024px;height:768px;transform-origin:center center;overflow:hidden;background:#8FD3E8}
+html,body{margin:0;height:100%;background:#1c2a20;overflow:hidden;touch-action:none;font-family:"Fredoka","Nunito","Segoe UI",system-ui,sans-serif;color:var(--bark)}
+#stage{position:absolute;left:50%;top:50%;width:1024px;height:768px;transform-origin:center center;overflow:hidden;background:var(--sky)}
 .screen{position:absolute;inset:0;display:none}
 .screen.on{display:block}
-.bg{position:absolute;inset:0;background-size:cover;background-position:center bottom}
+.bg{position:absolute;inset:0;background-size:cover;background-position:center}
 .sky{position:absolute;inset:0;background:linear-gradient(#7fc9e6,#d9f0f8 60%)}
 .ground{position:absolute;left:0;right:0;bottom:0;height:34%;background:linear-gradient(#86c75d,#5e9e3f)}
-.ground::before{content:"";position:absolute;left:0;right:0;top:-18px;height:36px;background:radial-gradient(circle at 20px 20px,#86c75d 18px,transparent 19px) 0 0/60px 36px repeat-x}
 
-/* ===== przyciski ===== */
-.btn{position:absolute;display:grid;place-items:center;border-radius:50%;background:#F5A524;color:#3a2a08;font-weight:700;box-shadow:0 8px 0 #b8781a,0 14px 20px rgba(0,0,0,.25);cursor:pointer;text-align:center;line-height:1;border:5px solid #fff;transition:transform .08s}
-.btn:active,.btn.pressed{transform:translateY(6px);box-shadow:0 2px 0 #b8781a,0 6px 10px rgba(0,0,0,.25)}
-.btn.green{background:#2F9E5B;color:#fff;box-shadow:0 8px 0 #1F7A44,0 14px 20px rgba(0,0,0,.25)}
-.btn.green:active,.btn.green.pressed{box-shadow:0 2px 0 #1F7A44,0 6px 10px rgba(0,0,0,.25)}
-.btn.white{background:#fff;color:#5B3A1F;box-shadow:0 7px 0 #cfc4b2,0 12px 18px rgba(0,0,0,.2);border-color:#f3e9d6}
-.btn.white:active,.btn.white.pressed{box-shadow:0 2px 0 #cfc4b2,0 5px 8px rgba(0,0,0,.2)}
-.btn .ic{font-size:44px;line-height:1}
-.btn .tx{font-size:20px;margin-top:4px;letter-spacing:.02em}
-.btn.huge{width:220px;height:220px}
-.btn.huge .ic{font-size:96px}
-.btn.huge .tx{font-size:34px}
-.btn.big{width:150px;height:150px}
-.btn.big .ic{font-size:60px}
-.btn.big .tx{font-size:22px}
-.btn.mid{width:130px;height:130px}
-.btn.back{left:24px;bottom:24px;width:110px;height:110px}
-.btn.back .ic{font-size:56px}
-.btn.album{right:28px;top:24px;width:110px;height:110px}
-.btn.album .ic{font-size:52px}
-.btn.bounce{animation:bounce 1.6s ease-in-out infinite}
-@keyframes bounce{0%,100%{transform:translateY(0)}50%{transform:translateY(-10px)}}
-.title{position:absolute;left:0;right:0;top:44px;text-align:center;font-size:84px;font-weight:700;color:#fff;text-shadow:0 5px 0 #b8781a,0 10px 18px rgba(0,0,0,.3);letter-spacing:.02em}
-.title small{display:block;font-size:34px;color:#fff8e6;text-shadow:0 3px 0 #b8781a}
+/* ===== komponenty z Figmy ===== */
+.rbtn{position:absolute;width:120px;height:120px;border-radius:50%;background:var(--cream);border:6px solid #fff;box-shadow:var(--lift);display:grid;place-items:center;cursor:pointer;transition:transform .08s,box-shadow .08s}
+.rbtn svg{width:58px;height:58px;display:block}
+.rbtn img{width:72px;height:72px;object-fit:contain;display:block;filter:drop-shadow(0 2px 2px rgba(0,0,0,.2))}
+.rbtn.pressed,.abtn.pressed{transform:translateY(6px);box-shadow:var(--lift-down)}
+.abtn{position:absolute;width:220px;height:120px;border-radius:999px;background:var(--leaf);color:#fff;font-weight:600;font-size:30px;letter-spacing:.02em;display:grid;place-items:center;box-shadow:var(--lift);cursor:pointer;transition:transform .08s,box-shadow .08s}
+.abtn.bounce{animation:bounce 1.6s ease-in-out infinite}
+@keyframes bounce{0%,100%{transform:translateY(0)}50%{transform:translateY(-8px)}}
+.guide{position:absolute;min-height:96px;width:410px;border-radius:52px;background:#fff;border:5px solid var(--leaf);display:flex;align-items:center;gap:18px;padding:10px 22px;cursor:pointer;z-index:20;box-shadow:0 8px 16px rgba(51,36,20,.15);transition:transform .15s}
+.guide .vi{flex:none;width:42px;height:42px;border-radius:50%;background:var(--leaf);display:grid;place-items:center}
+.guide .vi svg{width:26px;height:26px}
+.guide p{margin:0;font-weight:500;font-size:22px;line-height:27px;color:var(--bark)}
+.guide.pop{animation:gpop .35s ease-out}
+@keyframes gpop{0%{transform:scale(.85)}60%{transform:scale(1.05)}100%{transform:scale(1)}}
+.guide.talk .vi{animation:vpulse .6s ease-in-out infinite}
+@keyframes vpulse{0%,100%{transform:scale(1)}50%{transform:scale(1.15)}}
+.plaque{position:absolute;height:90px;border-radius:45px;background:rgba(255,245,214,.94);box-shadow:0 7px 9px rgba(91,58,31,.23);display:grid;place-items:center;padding:0 46px;font-weight:700;font-size:42px;color:var(--bark);white-space:nowrap;letter-spacing:.02em}
+.kostek{position:absolute;pointer-events:none;z-index:5}
+.kostek img{width:100%;height:100%;object-fit:contain;object-position:bottom;display:block;filter:drop-shadow(0 8px 6px rgba(0,0,0,.22))}
+.kostek.talk{animation:ktalk .5s ease-in-out infinite;transform-origin:50% 100%}
+@keyframes ktalk{0%,100%{transform:scale(1)}50%{transform:scale(1.02) translateY(-3px)}}
+.kostek.jump{animation:kjump .6s ease-out}
+@keyframes kjump{0%,100%{transform:translateY(0)}40%{transform:translateY(-34px)}}
+.sprite{position:absolute;pointer-events:none}
+.sprite img{width:100%;height:100%;object-fit:contain;object-position:bottom;display:block;filter:drop-shadow(0 10px 8px rgba(0,0,0,.22))}
+.sprite.tap{pointer-events:auto;cursor:pointer}
+.sprite.breathe img{animation:breathe 2.8s ease-in-out infinite;transform-origin:50% 100%}
+@keyframes breathe{0%,100%{transform:scaleY(1)}50%{transform:scaleY(1.02) scaleX(1.005)}}
+.sprite.tickle img{animation:tickle .6s ease-in-out}
+@keyframes tickle{0%,100%{transform:translateY(0) rotate(0)}25%{transform:translateY(-30px) rotate(-3deg)}50%{transform:translateY(0)}75%{transform:translateY(-16px) rotate(3deg)}}
+.sprite.wiggle img{animation:wiggle .5s ease-in-out 3}
+@keyframes wiggle{0%,100%{transform:rotate(0)}25%{transform:rotate(-4deg)}75%{transform:rotate(4deg)}}
+.sprite.walk img{animation:bob .5s ease-in-out infinite}
+@keyframes bob{0%,100%{transform:translateY(0)}50%{transform:translateY(-6px)}}
+.dots{position:absolute;display:flex;gap:14px;z-index:6}
+.dots i{width:34px;height:34px;border-radius:50%;background:var(--cream);border:3px solid #fff;box-shadow:0 3px 6px rgba(0,0,0,.2);display:block;transition:background .2s}
+.dots i.on{background:var(--leaf);animation:pop .3s}
+@keyframes pop{0%{transform:scale(.4)}60%{transform:scale(1.3)}100%{transform:scale(1)}}
+.title{position:absolute;left:0;right:0;top:46px;text-align:center;font-weight:700;font-size:66px;line-height:70px;color:var(--cream);text-shadow:0 4px 0 rgba(91,58,31,.55),0 10px 18px rgba(0,0,0,.35)}
+.brawo{position:absolute;left:72px;top:68px;font-weight:700;font-size:62px;color:var(--cream);text-shadow:0 4px 0 rgba(91,58,31,.6),0 10px 18px rgba(0,0,0,.35);opacity:0;transform:scale(.6);transition:opacity .4s,transform .4s cubic-bezier(.3,1.5,.5,1)}
+.brawo.on{opacity:1;transform:scale(1)}
 
-/* ===== dinozaury (SVG) ===== */
+/* ===== zastępcze rysunki SVG (gdy brakuje obrazka) ===== */
 .dino{position:absolute;pointer-events:none}
-.dino.tap{pointer-events:auto;cursor:pointer}
 .dino svg{width:100%;height:100%;overflow:visible}
 .dino img{position:absolute;left:0;top:0;width:100%;height:100%;object-fit:contain;object-position:bottom}
-.dino .d-body{transform-origin:50% 60%}
-.dino.breathe .d-all{animation:breathe 2.6s ease-in-out infinite;transform-origin:50% 100%}
-@keyframes breathe{0%,100%{transform:scaleY(1)}50%{transform:scaleY(1.025)}}
 .dino .d-lid{opacity:0}
-.dino.breathe .d-lid{animation:blink 4.5s infinite}
-@keyframes blink{0%,94%,100%{opacity:0}96%,98%{opacity:1}}
 .dino .d-jaw{transform-origin:var(--jx) var(--jy);transition:transform .15s}
 .dino.roar .d-jaw{transform:rotate(22deg)}
-.dino .d-tail{transform-origin:var(--tx) var(--ty)}
-.dino.breathe .d-tail{animation:tail 3s ease-in-out infinite}
-@keyframes tail{0%,100%{transform:rotate(0)}50%{transform:rotate(-5deg)}}
 .dino .d-leg{transform-origin:var(--lx) var(--ly)}
 .dino.walk .d-leg.a{animation:legA .5s ease-in-out infinite}
 .dino.walk .d-leg.b{animation:legB .5s ease-in-out infinite}
 @keyframes legA{0%,100%{transform:rotate(-18deg)}50%{transform:rotate(18deg)}}
 @keyframes legB{0%,100%{transform:rotate(18deg)}50%{transform:rotate(-18deg)}}
-.dino.walk .d-all{animation:bob .5s ease-in-out infinite}
-@keyframes bob{0%,100%{transform:translateY(0)}50%{transform:translateY(-6px)}}
-.dino.tickle{animation:tickle .6s ease-in-out}
-@keyframes tickle{0%,100%{transform:translateY(0) rotate(0)}25%{transform:translateY(-30px) rotate(-3deg)}50%{transform:translateY(0) rotate(0)}75%{transform:translateY(-16px) rotate(3deg)}}
-.dino.shake{animation:shake .5s ease-in-out}
-@keyframes shake{0%,100%{transform:translateX(0)}20%{transform:translateX(-8px)}40%{transform:translateX(8px)}60%{transform:translateX(-6px)}80%{transform:translateX(6px)}}
-.dino .d-neck{transform-origin:var(--nx) var(--ny);transition:transform .55s cubic-bezier(.4,0,.2,1)}
-.dino .d-neckg{transition:transform .55s cubic-bezier(.4,0,.2,1)}
-.dino .d-arm{transform-origin:var(--ax) var(--ay)}
-.dino.wave .d-arm{animation:wave .35s ease-in-out 6}
-@keyframes wave{0%,100%{transform:rotate(0)}50%{transform:rotate(-40deg)}}
-.dino .d-frill{transition:filter .3s}
-.dino.glow .d-frill{animation:glow 1.2s ease-in-out 2}
-@keyframes glow{0%,100%{filter:none}50%{filter:brightness(1.35) saturate(1.6) drop-shadow(0 0 14px #ffd166)}}
-
-/* szkielet z tego samego rysunku */
+.dino .d-neck{transform-origin:var(--nx) var(--ny);transition:transform .55s}
 .d-bones{display:none}
 .svgskel svg{width:100%;height:100%;overflow:visible}
 .svgskel .d-all > *:not(.d-bones),.svgskel .d-all > *:not(.d-bones) *{fill:#f8f1dd;stroke:#a08c62}
 .svgskel .d-lid{display:none}
 .svgskel .d-bones{display:block}
 .mascot svg{width:100%;height:100%;overflow:visible}
-.mascot .d-arm{transform-box:view-box;animation:wave .4s ease-in-out infinite}
 
 /* ===== efekty ===== */
 .particle{position:absolute;pointer-events:none;will-change:transform,opacity}
 .stage-shake{animation:sshake .4s}
 @keyframes sshake{0%,100%{transform:translate(-50%,-50%) scale(var(--s)) translate(0,0)}25%{transform:translate(-50%,-50%) scale(var(--s)) translate(-8px,6px)}50%{transform:translate(-50%,-50%) scale(var(--s)) translate(8px,-4px)}75%{transform:translate(-50%,-50%) scale(var(--s)) translate(-4px,4px)}}
-.flash{position:absolute;inset:0;background:#fff;opacity:0;pointer-events:none}
+.flash{position:absolute;inset:0;background:#fff;opacity:0;pointer-events:none;z-index:30}
 .hint{position:absolute;width:110px;height:110px;pointer-events:none;display:none;z-index:50;filter:drop-shadow(0 6px 8px rgba(0,0,0,.35))}
 .hint.on{display:block;animation:hint 1s ease-in-out infinite}
 @keyframes hint{0%,100%{transform:translate(0,0) scale(1)}50%{transform:translate(-14px,-18px) scale(.9)}}
-.rotate{position:fixed;inset:0;background:#2F9E5B;color:#fff;display:none;place-items:center;text-align:center;font-size:32px;z-index:100;padding:40px}
+.rotate{position:fixed;inset:0;background:var(--leaf);color:#fff;display:none;place-items:center;text-align:center;font-size:32px;z-index:100;padding:40px}
 .rotate .ipad{width:120px;height:170px;border:10px solid #fff;border-radius:18px;margin:0 auto 24px;animation:rot 2s ease-in-out infinite}
 @keyframes rot{0%,30%{transform:rotate(0)}70%,100%{transform:rotate(-90deg)}}
 @media (orientation:portrait) and (pointer:coarse){.rotate{display:grid}}
-.dev{position:fixed;left:8px;top:8px;font:12px monospace;color:#fff;opacity:.5;z-index:99;pointer-events:none}
+.glow{position:absolute;border-radius:50%;background:radial-gradient(circle,rgba(255,236,150,.85),rgba(255,214,90,.35) 55%,rgba(255,214,90,0) 72%);opacity:0;transition:opacity .6s;pointer-events:none}
+.sparkle{position:absolute;width:44px;height:44px;pointer-events:none;opacity:0;animation:spark 1.4s ease-in-out infinite}
+@keyframes spark{0%,100%{opacity:0;transform:scale(.4) rotate(0)}50%{opacity:1;transform:scale(1) rotate(20deg)}}
 
-/* ===== ekrany szczegółowo ===== */
-#s-start .mascot{position:absolute;left:70px;bottom:40px;width:200px;height:300px}
-#start-dino{left:600px;bottom:170px;width:420px;height:420px}
-#s-start .btn.huge{left:402px;top:280px}
-#s-start .btn.album{right:40px;bottom:40px;top:auto}
-#s-camp .mound{position:absolute;width:230px;height:150px;cursor:pointer;transform-origin:50% 100%}
+/* ===== ekrany ===== */
+#s-start .kostek{left:28px;top:226px;width:280px;height:520px}
+#start-dino{position:absolute;left:540px;top:245px;width:465px;height:465px}
+#s-start .guide{left:275px;top:464px}
+#s-start .abtn{left:402px;top:615px}
+#s-start #btn-album{left:864px;top:610px}
+#s-camp .guide{left:307px;top:38px}
+#s-camp .kostek{left:18px;top:250px;width:255px;height:470px}
+#s-camp .mound{position:absolute;cursor:pointer;transform-origin:50% 100%}
+#s-camp .mound .halo{position:absolute;inset:-18px -14px -26px -14px;border-radius:50%;background:rgba(255,243,209,.55);box-shadow:0 0 0 5px rgba(255,255,255,.5)}
+#s-camp .mound svg{position:absolute;inset:0;width:100%;height:100%;overflow:visible}
 #s-camp .mound.locked{animation:mound 3s ease-in-out infinite}
-@keyframes mound{0%,100%{transform:scale(1)}50%{transform:scale(1.03)}}
-#s-camp .mound svg{width:100%;height:100%;overflow:visible}
-#s-camp .mound .sticker{position:absolute;left:35px;top:-60px;width:160px;height:160px}
-#s-camp .tent{position:absolute;left:40px;top:150px;width:260px;height:200px}
-.sticker{border-radius:50%;background:#fff;box-shadow:0 8px 16px rgba(0,0,0,.25);display:grid;place-items:center;overflow:hidden;border:6px solid #fff}
-.sticker .dino{position:relative;width:88%;height:88%}
-.sticker.locked{background:rgba(255,255,255,.55);color:#8a8a8a;font-size:90px;font-weight:700}
-.sticker.wobble{animation:wobble 3s ease-in-out infinite}
-@keyframes wobble{0%,100%{transform:rotate(-3deg)}50%{transform:rotate(3deg)}}
-#s-dig{background:#b8935a}
-#s-dig .pit{position:absolute;left:112px;top:64px;width:800px;height:600px;border-radius:40px;background:#c9a465;box-shadow:inset 0 0 0 16px #8a6a3a,0 0 0 12px #a67c3f,0 18px 30px rgba(0,0,0,.3);overflow:hidden}
-#s-dig .skel{position:absolute;left:80px;top:60px;width:640px;height:480px}
-#s-dig canvas{position:absolute;left:0;top:0;width:800px;height:600px;cursor:crosshair}
-#s-dig .progress{position:absolute;right:28px;top:28px;display:flex;gap:10px}
-#s-dig .progress i{width:42px;height:42px;border-radius:50%;background:rgba(255,255,255,.35);border:4px solid #fff;display:grid;place-items:center;font-size:24px;font-style:normal;color:transparent}
-#s-dig .progress i.on{background:#fff;color:#8a6a3a}
-#s-dig .brush{position:absolute;width:120px;height:120px;pointer-events:none;display:none;transform:translate(-30%,-80%)}
-#reveal-dino,#reveal-skel{position:absolute;left:262px;bottom:150px;width:520px;height:520px}
-#s-reveal .skel{opacity:1}
-#card-dino{left:262px;bottom:150px;width:520px;height:520px}
-#s-card .btn.mid{width:150px;height:150px}
-#s-card .food{position:absolute;width:220px;height:220px;left:1100px;bottom:340px;transition:left .8s cubic-bezier(.3,0,.2,1),transform .3s}
-#s-card .sizescene{position:absolute;inset:0;display:none;z-index:20}
-#s-card .sizescene.on{display:block}
-#s-card .cmp{position:absolute;bottom:150px}
-#s-card .kid{position:absolute;bottom:150px;width:60px}
-#s-game .counter{position:absolute;left:150px;top:30px;display:flex;gap:12px;background:rgba(255,255,255,.8);border-radius:40px;padding:10px 18px}
-#s-game .counter i{width:52px;height:52px;display:grid;place-items:center;font-size:36px;font-style:normal;opacity:.25;filter:grayscale(1)}
-#s-game .counter i.on{opacity:1;filter:none;animation:pop .3s}
-@keyframes pop{0%{transform:scale(.4)}60%{transform:scale(1.3)}100%{transform:scale(1)}}
-.target{position:absolute;cursor:pointer;transform-origin:50% 50%}
-.target.leaf{width:120px;height:120px;animation:sway 2.4s ease-in-out infinite}
-@keyframes sway{0%,100%{transform:rotate(-6deg)}50%{transform:rotate(6deg)}}
-.target.fern{width:160px;height:140px}
+@keyframes mound{0%,100%{transform:scale(1)}50%{transform:scale(1.04)}}
+#s-camp .mound .peek{position:absolute;left:12%;right:12%;top:-70%;height:120%;pointer-events:none}
+#s-camp .mound .peek img{width:100%;height:100%;object-fit:contain;object-position:bottom;filter:drop-shadow(0 6px 6px rgba(0,0,0,.25))}
+#s-camp .mound .badge{position:absolute;right:-6px;top:-40px;width:58px;height:58px;border-radius:50%;background:var(--leaf);border:4px solid #fff;display:grid;place-items:center;box-shadow:0 4px 8px rgba(0,0,0,.25)}
+#s-camp .mound .badge svg{width:30px;height:30px}
+#s-camp #btn-back{left:24px;top:624px}
+#s-dig .skel{position:absolute;left:118px;top:180px;width:790px;height:420px}
+#s-dig .skel img{width:100%;height:100%;object-fit:contain}
+#s-dig canvas{position:absolute;left:70px;top:130px;width:884px;height:540px;cursor:crosshair}
+#s-dig .dots{left:168px;top:48px}
+#s-dig .guide{left:548px;top:28px}
+#s-dig .kostek{left:24px;top:345px;width:215px;height:390px}
+#s-dig #btn-back{left:24px;top:28px}
+#s-dig .brush{position:absolute;width:118px;height:118px;pointer-events:none;display:none;transform:translate(-30%,-80%);z-index:8}
+#s-reveal .glow{left:300px;top:120px;width:620px;height:560px}
+#s-reveal .skel{position:absolute;left:262px;top:150px;width:520px;height:460px;transition:all 1s ease-in-out}
+#s-reveal .skel img{width:100%;height:100%;object-fit:contain;object-position:bottom}
+#s-reveal .skel.memory{left:55px;top:330px;width:430px;height:250px;opacity:.45}
+#reveal-dino{left:350px;top:105px;width:590px;height:600px;opacity:0;transform:scale(.7);transition:opacity .5s,transform .5s}
+#s-reveal .kostek{left:28px;top:370px;width:245px;height:365px;opacity:0;transition:opacity .4s}
+#s-reveal .guide{left:95px;top:235px;opacity:0;transition:opacity .4s}
+#s-reveal .on{opacity:1}
+#s-card .plaque{left:50%;top:24px;transform:translateX(-50%)}
+#s-card .guide{left:35px;top:150px}
+#s-card .kostek{left:24px;top:325px;width:235px;height:410px}
+#card-dino{left:264px;top:135px;width:535px;height:540px}
+#s-card .col .rbtn{left:864px}
+#s-card #btn-game{left:585px;top:620px}
+#s-card #btn-back{left:26px;top:24px}
+#s-card .food{position:absolute;width:200px;height:200px;left:900px;top:200px;transition:left .8s cubic-bezier(.3,0,.2,1),top .8s cubic-bezier(.3,0,.2,1),transform .3s;pointer-events:none;z-index:4}
+#s-card .food img{width:100%;height:100%;object-fit:contain;filter:drop-shadow(0 6px 6px rgba(0,0,0,.25))}
+#sizescene{position:absolute;inset:0;display:none;z-index:15}
+#sizescene.on{display:block}
+#sizescene .veil{position:absolute;inset:0;background:rgba(255,248,230,.6)}
+#sizescene .tape{position:absolute;height:22px;background:repeating-linear-gradient(90deg,var(--sun) 0 30px,#fff 30px 36px);border:3px solid var(--bark);border-radius:6px;box-shadow:0 4px 8px rgba(0,0,0,.25)}
+#sizescene .tag{position:absolute;background:var(--bark);color:#fff;border-radius:999px;padding:4px 14px;font-weight:600;font-size:20px}
+#s-game .dots{left:180px;top:49px}
+#s-game .guide{left:548px;top:28px}
+#s-game .kostek{left:24px;top:430px;width:205px;height:305px}
+#s-game #btn-back{left:24px;top:24px}
+.target{position:absolute;cursor:pointer;width:118px;height:118px;border-radius:50%;background:rgba(255,243,209,.82);box-shadow:0 0 0 5px rgba(255,255,255,.6),0 8px 14px rgba(0,0,0,.2);display:grid;place-items:center;animation:sway 2.4s ease-in-out infinite;z-index:3}
+.target img{width:92px;height:92px;object-fit:contain;filter:drop-shadow(0 4px 4px rgba(0,0,0,.25))}
+.target.eaten{pointer-events:none;opacity:0;transition:opacity .3s}
+@keyframes sway{0%,100%{transform:rotate(-4deg)}50%{transform:rotate(4deg)}}
+.target.foot{animation:footpulse 1.2s ease-in-out infinite}
+.target.foot svg{width:80px;height:80px}
+@keyframes footpulse{0%,100%{transform:scale(1)}50%{transform:scale(1.12)}}
+.target.fern{width:150px;height:150px;animation:none}
+.target.fern img{width:130px;height:130px}
+.target.fern.done{opacity:.55;pointer-events:none}
 .target.fern.shake{animation:fshake .4s}
-@keyframes fshake{0%,100%{transform:scaleX(1)}25%{transform:scaleX(1.15) rotate(-4deg)}75%{transform:scaleX(1.15) rotate(4deg)}}
-.target.foot{width:110px;height:110px;animation:footpulse 1.2s ease-in-out infinite}
-@keyframes footpulse{0%,100%{transform:scale(1);opacity:.9}50%{transform:scale(1.15);opacity:.6}}
-.egg{position:absolute;width:70px;height:88px;transition:left 1s cubic-bezier(.4,0,.2,1),top 1s cubic-bezier(.4,0,.2,1),transform 1s}
-.tree{position:absolute;bottom:200px}
-.nest{position:absolute;width:260px;height:120px}
-.baby{position:absolute;width:110px;height:100px;animation:hop .6s ease-in-out infinite}
+@keyframes fshake{0%,100%{transform:scaleX(1)}25%{transform:scaleX(1.12) rotate(-4deg)}75%{transform:scaleX(1.12) rotate(4deg)}}
+.flyleaf{position:absolute;width:92px;height:92px;pointer-events:none;z-index:4;transition:left .5s ease-in,top .5s ease-in,transform .5s}
+.flyleaf img{width:100%;height:100%;object-fit:contain}
+.egg{position:absolute;width:70px;height:88px;transition:left 1s cubic-bezier(.4,0,.2,1),top 1s cubic-bezier(.4,0,.2,1),transform 1s;z-index:4}
+.nest{position:absolute;width:260px;height:120px;z-index:2}
+.baby{position:absolute;width:120px;height:110px;animation:hop .6s ease-in-out infinite;z-index:5}
+.baby img{width:100%;height:100%;object-fit:contain;object-position:bottom}
 @keyframes hop{0%,100%{transform:translateY(0)}50%{transform:translateY(-20px)}}
 .bird{position:absolute;width:50px;height:30px;pointer-events:none}
-#s-album .board{position:absolute;left:72px;top:150px;right:72px;bottom:60px;display:flex;flex-wrap:wrap;justify-content:center;align-content:center;gap:40px}
-#s-album .sticker{width:250px;height:250px;cursor:pointer}
-#s-album .sticker.locked{font-size:120px}
+.surprise{position:absolute;font-size:70px;transition:transform 1.6s ease-out,opacity 1.6s;z-index:5}
+#s-album .plaque{left:160px;top:25px;height:96px;font-size:40px}
+#s-album .guide{left:580px;top:26px}
+#s-album .kostek{left:4px;top:310px;width:150px;height:240px}
+#s-album #btn-back{left:24px;top:24px}
+.card{position:absolute;top:154px;width:270px;height:500px;border-radius:32px;background:rgba(255,245,214,.94);border:6px solid var(--c,var(--leaf));box-shadow:0 10px 12px rgba(91,58,31,.25);cursor:pointer;transition:transform .15s}
+.card.pressed{transform:scale(.97)}
+.card .pic{position:absolute;left:12px;top:14px;width:234px;height:370px;display:grid;place-items:center}
+.card .pic img{width:100%;height:100%;object-fit:contain}
+.card .nm{position:absolute;left:0;right:0;top:418px;text-align:center;font-weight:700;font-size:25px;color:var(--bark)}
+.card .badge{position:absolute;right:12px;top:10px;width:58px;height:58px;border-radius:50%;background:var(--leaf);border:4px solid #fff;display:grid;place-items:center;box-shadow:0 4px 8px rgba(0,0,0,.2)}
+.card .badge svg{width:30px;height:30px}
+.card.locked{--c:#c9b58f;background:rgba(240,230,205,.9)}
+.card.locked .pic img{filter:brightness(0) opacity(.18)}
+.card.locked .q{position:absolute;left:0;right:0;top:130px;text-align:center;font-weight:700;font-size:150px;color:rgba(91,58,31,.45)}
 #s-parent{background:rgba(20,30,24,.92);color:#fff}
 #s-parent .panel{position:absolute;left:112px;top:60px;width:800px;bottom:60px;background:#fff;color:#1E2A22;border-radius:28px;padding:36px 44px;font-family:"Nunito","Segoe UI",system-ui,sans-serif;font-size:20px;overflow:auto;touch-action:pan-y}
-#s-parent h2{font-family:"Fredoka",sans-serif;margin:0 0 10px;font-size:34px;color:#1F7A44}
+#s-parent h2{font-family:"Fredoka",sans-serif;margin:0 0 10px;font-size:34px;color:var(--leaf2)}
 #s-parent .row{display:flex;align-items:center;justify-content:space-between;padding:14px 0;border-bottom:1px solid #e3e8dc}
 #s-parent .sw{width:80px;height:44px;border-radius:22px;background:#c9d1c3;position:relative;cursor:pointer;transition:background .2s}
 #s-parent .sw::after{content:"";position:absolute;left:4px;top:4px;width:36px;height:36px;border-radius:50%;background:#fff;transition:left .2s}
-#s-parent .sw.on{background:#2F9E5B}
+#s-parent .sw.on{background:var(--leaf)}
 #s-parent .sw.on::after{left:40px}
-#s-parent button{font:inherit;font-family:"Fredoka",sans-serif;font-size:22px;padding:12px 26px;border-radius:999px;border:0;background:#C4643A;color:#fff;cursor:pointer}
+#s-parent button{font:inherit;font-family:"Fredoka",sans-serif;font-size:22px;padding:12px 26px;border-radius:999px;border:0;background:var(--clay);color:#fff;cursor:pointer}
 #s-parent button.sec{background:#e3e8dc;color:#1E2A22}
 #s-parent p{margin:8px 0;color:#5A6A5F;font-size:17px}
 #s-parent .close{position:absolute;right:20px;top:20px;width:64px;height:64px;border-radius:50%;background:#e3e8dc;color:#1E2A22;font-size:34px;display:grid;place-items:center;cursor:pointer}
-.corner{position:absolute;left:0;top:0;width:150px;height:150px;z-index:40}
-.lock{pointer-events:none}
 </style>
 </head>
 <body>
@@ -185,71 +221,85 @@ html,body{margin:0;height:100%;background:#1c2a20;overflow:hidden;touch-action:n
 <!-- E1 START -->
 <section class="screen on" id="s-start">
   <div class="bg" data-bg="bg_start.jpg"><div class="sky"></div><div class="ground"></div></div>
-  <div class="mascot" id="mascot-start"></div>
-  <div class="dino breathe" id="start-dino"></div>
-  <div class="title">DINO<br>ODKRYWCA</div>
-  <div class="btn huge green bounce" id="btn-play"><span class="ic">▶</span><span class="tx">GRAJ</span></div>
-  <div class="btn album white" id="btn-album-1"><span class="ic">⭐</span></div>
-  <div class="corner" id="corner-1"></div>
+  <div class="title" id="title-start">Dino Odkrywca</div>
+  <div class="kostek" data-pose="wave"></div>
+  <div class="sprite breathe" id="start-dino"></div>
+  <div class="guide"><div class="vi"></div><p></p></div>
+  <div class="abtn bounce" id="btn-play">GRAJ</div>
+  <div class="rbtn" id="btn-album" data-icon="album"></div>
 </section>
 
 <!-- E2 OBÓZ -->
 <section class="screen" id="s-camp">
   <div class="bg" data-bg="bg_camp.jpg"><div class="sky" style="background:linear-gradient(#f8c98a,#fbe7c2 55%)"></div><div class="ground" style="height:48%;background:linear-gradient(#d9b36f,#b8935a)"></div></div>
-  <div class="tent" id="tent"></div>
+  <div class="guide"><div class="vi"></div><p></p></div>
+  <div class="kostek" data-pose="point"></div>
   <div id="mounds"></div>
-  <div class="btn back white" data-go="start"><span class="ic">↩</span></div>
-  <div class="btn album white" id="btn-album-2"><span class="ic">⭐</span></div>
-  <div class="corner" id="corner-2"></div>
+  <div class="rbtn" id="btn-back" data-go="start" data-icon="back"></div>
 </section>
 
 <!-- E3 WYKOPALISKO -->
 <section class="screen" id="s-dig">
-  <div class="pit">
-    <div class="skel" id="dig-skel"></div>
-    <canvas id="sand" width="800" height="600"></canvas>
-    <div class="brush" id="brush"></div>
-  </div>
-  <div class="progress" id="dig-progress"></div>
-  <div class="btn back white" data-go="camp"><span class="ic">↩</span></div>
+  <div class="bg" data-bg="bg_dig.jpg" style="background:#c9a465"></div>
+  <div class="skel" id="dig-skel"></div>
+  <canvas id="sand" width="884" height="540"></canvas>
+  <div class="brush" id="brush"></div>
+  <div class="dots" id="dig-dots"></div>
+  <div class="guide"><div class="vi"></div><p></p></div>
+  <div class="kostek" data-pose="point"></div>
+  <div class="rbtn" id="btn-back" data-go="camp" data-icon="back"></div>
 </section>
 
 <!-- E4 OŻYWIENIE -->
 <section class="screen" id="s-reveal">
   <div class="bg" id="reveal-bg"><div class="sky"></div><div class="ground"></div></div>
+  <div class="glow" id="reveal-glow"></div>
   <div class="skel" id="reveal-skel"></div>
-  <div class="dino" id="reveal-dino" style="opacity:0"></div>
+  <div class="sprite" id="reveal-dino"></div>
+  <div id="sparkles"></div>
+  <div class="brawo" id="brawo">BRAWO!</div>
+  <div class="kostek" data-pose="wave"></div>
+  <div class="guide"><div class="vi"></div><p></p></div>
   <div class="flash" id="reveal-flash"></div>
 </section>
 
 <!-- E5 KARTA -->
 <section class="screen" id="s-card">
   <div class="bg" id="card-bg"><div class="sky"></div><div class="ground"></div></div>
-  <div class="dino breathe tap" id="card-dino"></div>
-  <div class="sizescene" id="sizescene"></div>
+  <div class="plaque" id="card-name"></div>
+  <div class="guide"><div class="vi"></div><p></p></div>
+  <div class="kostek" data-pose="idle"></div>
+  <div class="sprite breathe tap" id="card-dino"></div>
   <div class="food" id="food"></div>
-  <div class="btn mid" data-act="voice" style="left:40px;top:120px"><span class="ic">🔊</span><span class="tx">GŁOS</span></div>
-  <div class="btn mid" data-act="food" style="left:40px;top:320px"><span class="ic">🍖</span><span class="tx">JEDZENIE</span></div>
-  <div class="btn mid" data-act="size" style="right:40px;top:120px"><span class="ic">📏</span><span class="tx">WIELKOŚĆ</span></div>
-  <div class="btn mid" data-act="fact" style="right:40px;top:320px"><span class="ic">⭐</span><span class="tx">CIEKAWOSTKA</span></div>
-  <div class="btn big green" id="btn-game" style="left:437px;bottom:20px"><span class="ic">🎮</span><span class="tx">ZAGRAJ</span></div>
-  <div class="btn back white" data-go="camp"><span class="ic">↩</span></div>
+  <div id="sizescene"></div>
+  <div class="col">
+    <div class="rbtn" data-act="voice" data-icon="sound" style="top:36px"></div>
+    <div class="rbtn" data-act="food" id="btn-food" style="top:184px"></div>
+    <div class="rbtn" data-act="size" data-icon="size" style="top:332px"></div>
+    <div class="rbtn" data-act="fact" data-icon="fact" style="top:480px"></div>
+  </div>
+  <div class="abtn" id="btn-game">ZAGRAJ</div>
+  <div class="rbtn" id="btn-back" data-go="camp" data-icon="back"></div>
 </section>
 
 <!-- E6 GIERKA -->
 <section class="screen" id="s-game">
   <div class="bg" id="game-bg"><div class="sky"></div><div class="ground"></div></div>
   <div id="game-layer" style="position:absolute;inset:0"></div>
-  <div class="counter" id="counter"></div>
-  <div class="btn back white" data-go="card"><span class="ic">↩</span></div>
+  <div class="dots" id="game-dots"></div>
+  <div class="guide"><div class="vi"></div><p></p></div>
+  <div class="kostek" data-pose="point"></div>
+  <div class="rbtn" id="btn-back" data-go="card" data-icon="back"></div>
 </section>
 
 <!-- E7 ALBUM -->
 <section class="screen" id="s-album">
   <div class="bg" data-bg="bg_album.jpg" style="background:linear-gradient(#efdcb0,#d2b078)"></div>
-  <div class="title" style="color:#5B3A1F;text-shadow:0 4px 0 #fff3d6;font-size:64px;top:36px">MOJE DINOZAURY</div>
-  <div class="board" id="album-board"></div>
-  <div class="btn back white" data-go="back"><span class="ic">↩</span></div>
+  <div class="plaque">ALBUM ODKRYWCY</div>
+  <div class="guide"><div class="vi"></div><p></p></div>
+  <div id="album-board"></div>
+  <div class="kostek" data-pose="idle"></div>
+  <div class="rbtn" id="btn-back" data-go="back" data-icon="back"></div>
 </section>
 
 <!-- E8 RODZIC -->
@@ -257,14 +307,13 @@ html,body{margin:0;height:100%;background:#1c2a20;overflow:hidden;touch-action:n
   <div class="panel">
     <div class="close" id="parent-close">✕</div>
     <h2>Panel rodzica</h2>
-    <p>Ten ekran otwiera się po przytrzymaniu lewego górnego rogu przez 3 sekundy.</p>
+    <p>Ten ekran otwiera się po przytrzymaniu napisu „Dino Odkrywca” na ekranie startowym przez 3 sekundy.</p>
     <div class="row"><span>Lektor (głos czytający polecenia)</span><div class="sw" data-set="voice"></div></div>
     <div class="row"><span>Muzyka w tle</span><div class="sw" data-set="music"></div></div>
     <div class="row"><span>Dźwięki i ryki</span><div class="sw" data-set="sfx"></div></div>
     <div class="row"><span>Imię dziecka: <b id="child-name"></b></span><button class="sec" id="btn-name">Zmień</button></div>
     <div class="row"><span>Odkryte dinozaury: <b id="parent-progress"></b></span><button id="btn-reset">Zacznij od nowa</button></div>
     <p style="margin-top:18px"><b>Żeby dziecko nie wyszło z apki na iPadzie:</b> Ustawienia → Dostępność → Dostęp nadzorowany → włącz. Potem w apce naciśnij trzy razy przycisk boczny (lub Początek) i wybierz „Start”. Wyjście: znów trzy razy i kod.</p>
-    <p><b>Własne obrazki:</b> wrzuć pliki do folderu <code>assets/</code> pod nazwami z pliku PROMPTS.md – apka sama je wykryje przy następnym uruchomieniu.</p>
     <p id="parent-dev" style="font-family:monospace;font-size:13px"></p>
   </div>
 </section>
@@ -281,7 +330,7 @@ html,body{margin:0;height:100%;background:#1c2a20;overflow:hidden;touch-action:n
 /* ---------- DANE DINOZAURÓW (dodaj kolejny wpis = nowy dinozaur) ---------- */
 const DINOS = [
   {
-    id:'trex', name:'Tyranozaur', emoji:'🦖',
+    id:'trex', name:'Tyranozaur', title:'Tyranozaur Rex', card:'#C4643A', emoji:'🦖',
     greeting:'To Tyranozaur! Król dinozaurów.',
     voice:{ text:'Tyranozaur ryczał najgłośniej ze wszystkich!', sound:'trex' },
     food:{ text:'Tyranozaur jadł mięso. Miał zęby wielkie jak banany!', item:'meat' },
@@ -292,7 +341,7 @@ const DINOS = [
     habitat:{ sky:'linear-gradient(#f2b76b,#ffe2b0 55%)', ground:'linear-gradient(#5f9c46,#3f7a2e)' }
   },
   {
-    id:'trice', name:'Triceratops', emoji:'🦏',
+    id:'trice', name:'Triceratops', card:'#2F9E5B', emoji:'🦏',
     greeting:'To Triceratops! Ma trzy rogi.',
     voice:{ text:'Triceratops sapał i pomrukiwał.', sound:'trice' },
     food:{ text:'Triceratops jadł rośliny: paprocie i krzaczki. Miał dziób jak papuga!', item:'fern' },
@@ -303,7 +352,7 @@ const DINOS = [
     habitat:{ sky:'linear-gradient(#8fd3e8,#e6f6fb 55%)', ground:'linear-gradient(#93cf62,#5e9e3f)' }
   },
   {
-    id:'brachio', name:'Brachiozaur', emoji:'🦕',
+    id:'brachio', name:'Brachiozaur', card:'#2F9E5B', emoji:'🦕',
     greeting:'To Brachiozaur! Ma najdłuższą szyję.',
     voice:{ text:'Brachiozaur trąbił cicho i łagodnie.', sound:'brachio' },
     food:{ text:'Brachiozaur jadł liście z samych czubków drzew. Przez cały dzień!', item:'leaves' },
@@ -673,13 +722,36 @@ function foodEl(item){
   return e;
 }
 
+/* ===== ikony interfejsu (odwzorowanie ikon z Figmy) ===== */
+const IK = 'fill="none" stroke="#5B3A1F" stroke-width="7" stroke-linecap="round" stroke-linejoin="round"';
+const ICON = {
+  back: `<svg viewBox="0 0 64 64"><path d="M38 14 L20 32 L38 50 M22 32 H52" ${IK}/></svg>`,
+  album: `<svg viewBox="0 0 64 64"><path d="M10 14 Q22 10 32 16 Q42 10 54 14 V50 Q42 46 32 52 Q22 46 10 50 Z" fill="#fff" ${IK}/><path d="M32 16 V52" ${IK}/></svg>`,
+  sound: `<svg viewBox="0 0 64 64"><path d="M10 26 h10 l14 -12 v36 l-14 -12 h-10 z" fill="#2F9E5B" stroke="#2F9E5B" stroke-width="5" stroke-linejoin="round"/><path d="M42 24 q6 8 0 16 M50 17 q12 15 0 30" fill="none" stroke="#2F9E5B" stroke-width="6" stroke-linecap="round"/></svg>`,
+  size: `<svg viewBox="0 0 64 64"><g transform="rotate(-45 32 32)"><rect x="6" y="24" width="52" height="16" rx="4" fill="#fff" ${IK}/><path d="M16 24 v6 M24 24 v9 M32 24 v6 M40 24 v9 M48 24 v6" stroke="#5B3A1F" stroke-width="4" stroke-linecap="round"/></g></svg>`,
+  fact: `<svg viewBox="0 0 64 64"><path d="M32 6 Q35 26 58 32 Q35 38 32 58 Q29 38 6 32 Q29 26 32 6 Z" fill="#F5A524" stroke="#5B3A1F" stroke-width="5" stroke-linejoin="round"/></svg>`,
+  check: `<svg viewBox="0 0 64 64"><path d="M14 34 L27 46 L50 18" fill="none" stroke="#fff" stroke-width="9" stroke-linecap="round" stroke-linejoin="round"/></svg>`,
+  voice: `<svg viewBox="0 0 64 64"><path d="M12 26 h9 l13 -11 v34 l-13 -11 h-9 z" fill="#fff"/><path d="M42 24 q6 8 0 16 M49 17 q11 15 0 30" fill="none" stroke="#fff" stroke-width="5" stroke-linecap="round"/></svg>`,
+  foot: `<svg viewBox="0 0 110 110"><g fill="rgba(91,58,31,.55)"><ellipse cx="55" cy="72" rx="26" ry="22"/><ellipse cx="22" cy="42" rx="11" ry="20" transform="rotate(-25 22 42)"/><ellipse cx="55" cy="30" rx="11" ry="22"/><ellipse cx="88" cy="42" rx="11" ry="20" transform="rotate(25 88 42)"/></g></svg>`,
+  sparkle: `<svg viewBox="0 0 44 44"><path d="M22 2 Q24 18 42 22 Q24 26 22 42 Q20 26 2 22 Q20 18 22 2 Z" fill="#FFF3D1"/></svg>`
+};
+function iconInto(el, name){ if(el && ICON[name]) el.innerHTML = ICON[name]; }
+/* sprite z obrazka (lub zastępczy SVG) w kontenerze .sprite */
+function spriteImg(name, fallbackHtml){
+  return HAVE[name] ? `<img src="assets/${name}" alt="">` : (fallbackHtml || '');
+}
+function kostekInto(host, pose){
+  host.innerHTML = HAVE[`kostek_${pose}.png`] ? `<img src="assets/kostek_${pose}.png" alt="">` : ART.mascot(pose);
+  if(!HAVE[`kostek_${pose}.png`]){ host.firstElementChild.style.cssText='width:100%;height:100%'; }
+}
+
 /* =====================================================================
-   EKRANY, NAWIGACJA, WYKOPALISKO, KARTA, GIERKI, ALBUM, RODZIC
+   EKRANY (układ wg Figmy), KOSTEK Z DYMKIEM, WYKOPALISKO, KARTA, GIERKI, ALBUM, RODZIC
    ===================================================================== */
-const VERSION = '0.1.0';
+const VERSION = '0.2.0';
 let cur = 'start', albumFrom = 'start', curDino = null, cleanup = null, busy = false;
 
-function bindTap(e, fn){ e.addEventListener('pointerdown', ev => { if(!ev.isPrimary) return; ev.preventDefault(); e.classList.add('pressed'); setTimeout(()=>e.classList.remove('pressed'),120); fn(ev); }); }
+function bindTap(e, fn){ e.addEventListener('pointerdown', ev => { if(!ev.isPrimary) return; ev.preventDefault(); ev.stopPropagation(); e.classList.add('pressed'); setTimeout(()=>e.classList.remove('pressed'),140); fn(ev); }); }
 function go(name, opts={}){
   hush(); if(cleanup){ cleanup(); cleanup = null; } busy = false;
   $$('.screen').forEach(s => s.classList.remove('on'));
@@ -687,7 +759,23 @@ function go(name, opts={}){
   if(name==='album') albumFrom = (cur==='album'||cur==='parent') ? albumFrom : cur;
   cur = name; ENTER[name](opts); scheduleHint();
 }
-$$('.btn[data-go]').forEach(b => bindTap(b, () => { SFX.pop(); const t = b.dataset.go; go(t==='back' ? albumFrom : t, t==='card' ? {dino:curDino} : {}); }));
+$$('.rbtn[data-go]').forEach(b => bindTap(b, () => { SFX.pop(); const t = b.dataset.go; go(t==='back' ? albumFrom : t, t==='card' ? {dino:curDino} : {}); }));
+$$('.rbtn[data-icon]').forEach(b => iconInto(b, b.dataset.icon));
+$$('.guide .vi').forEach(v => v.innerHTML = ICON.voice);
+$$('.kostek[data-pose]').forEach(k => kostekInto(k, k.dataset.pose));
+
+/* ---------- Kostek mówi (dymek + lektor) ---------- */
+let lastGuide = {};
+function guide(text, opts={}){
+  const scr = $('#s-'+cur); const g = scr.querySelector('.guide'); const k = scr.querySelector('.kostek');
+  if(!g) return Promise.resolve();
+  const shown = text.replace('{imię}', S.name);
+  g.querySelector('p').textContent = shown; lastGuide[cur] = text;
+  g.classList.remove('pop'); void g.offsetWidth; g.classList.add('pop');
+  g.classList.add('talk'); if(k) k.classList.add('talk');
+  return speak(text, opts.delay||0).then(()=>{ g.classList.remove('talk'); if(k) k.classList.remove('talk'); });
+}
+$$('.guide').forEach(g => bindTap(g, () => { SFX.pop(); const t = lastGuide[cur]; if(t) guide(t); const k = $('#s-'+cur+' .kostek'); if(k){ k.classList.remove('jump'); void k.offsetWidth; k.classList.add('jump'); } }));
 
 /* ---------- podpowiedź po bezczynności ---------- */
 let hintTimer = null; const HINT_MS = 12000;
@@ -695,19 +783,37 @@ const hintEl = $('#hint'); hintEl.innerHTML = ART.hand();
 function showHint(){
   const h = HINTS[cur] && HINTS[cur](); if(!h) return;
   hintEl.style.left = (h.x-20)+'px'; hintEl.style.top = (h.y-10)+'px'; hintEl.classList.add('on');
-  if(h.text) speak(h.text);
+  if(lastGuide[cur]) guide(lastGuide[cur]);
   setTimeout(()=>hintEl.classList.remove('on'), 4000); scheduleHint();
 }
 function scheduleHint(){ clearTimeout(hintTimer); hintTimer = setTimeout(showHint, HINT_MS); }
 stage.addEventListener('pointerdown', () => { hintEl.classList.remove('on'); scheduleHint(); audioUnlock(); }, true);
+const center = el => ({ x: el.offsetLeft + el.offsetWidth/2, y: el.offsetTop + el.offsetHeight/2 });
 const HINTS = {
-  start: () => ({ x:512, y:400, text:'Dotknij zielonego guzika!' }),
-  camp: () => { const m = $('#s-camp .mound.locked') || $('#s-camp .mound'); if(!m) return null; return { x: m.offsetLeft+115, y: m.offsetTop+80, text:'Dotknij kopca, żeby kopać.' }; },
-  dig: () => ({ x:512, y:380, text:'Potrzyj palcem piasek, żeby odkryć kości.' }),
-  card: () => ({ x:115, y:200, text:'Dotknij kółka, żeby posłuchać głosu.' }),
-  game: () => { const t = $('#game-layer .target'); if(!t) return null; return { x:t.offsetLeft+t.offsetWidth/2, y:t.offsetTop+t.offsetHeight/2, text: GAMES[byId(curDino).game].hint }; },
-  album: () => { const s = $('#album-board .sticker'); return s ? { x:s.offsetLeft+72+125, y:s.offsetTop+150+125, text:'Dotknij naklejki.' } : null; }
+  start: () => center($('#btn-play')),
+  camp: () => { const m = $('#s-camp .mound.locked') || $('#s-camp .mound'); return m ? center(m) : null; },
+  dig: () => ({ x:512, y:400 }),
+  card: () => ({ x:924, y:96 }),
+  game: () => { const t = $('#game-layer .target'); return t ? center(t) : null; },
+  album: () => { const s = $('#album-board .card'); return s ? { x:s.offsetLeft+135, y:s.offsetTop+250 } : null; }
 };
+
+/* ---------- sprite dinozaura (obrazek albo zastępczy SVG) ---------- */
+function spriteInto(host, id, pose='idle'){
+  host.dataset.id = id; host.dataset.pose = pose;
+  if(HAVE[`${id}_idle.png`]){ host.innerHTML = `<img src="assets/${id}_${HAVE[`${id}_${pose}.png`]?pose:'idle'}.png" alt="">`; }
+  else { host.innerHTML=''; const d = dinoEl(id); d.style.cssText='position:absolute;inset:0'; host.appendChild(d); if(pose==='roar') d.classList.add('roar'); }
+}
+function pose(host, p){ // 'idle' | 'roar' | 'walk'
+  const id = host.dataset.id; host.dataset.pose = p; host.classList.toggle('walk', p==='walk');
+  const img = host.querySelector('img'); clearInterval(host._walkTimer);
+  if(img){
+    if(p==='walk' && HAVE[`${id}_walk1.png`]){ let f=1; img.src=`assets/${id}_walk1.png`; host._walkTimer=setInterval(()=>{ f=f===1?2:1; img.src=`assets/${id}_walk${HAVE[`${id}_walk2.png`]?f:1}.png`; }, 260); }
+    else img.src = `assets/${id}_${(p==='roar'&&HAVE[`${id}_roar.png`])?'roar':'idle'}.png`;
+  } else { const d = host.querySelector('.dino'); if(d){ d.classList.toggle('roar', p==='roar'); d.classList.toggle('walk', p==='walk'); } }
+}
+function skelInto(host, id){ host.innerHTML=''; const s = skelEl(id); s.style.cssText='position:absolute;inset:0'; host.appendChild(s); }
+function setDots(host, n){ host.innerHTML = [0,1,2,3,4].map(i=>`<i class="${i<n?'on':''}"></i>`).join(''); }
 
 /* ---------- cząsteczki ---------- */
 function particles(n, opts){
@@ -716,243 +822,250 @@ function particles(n, opts){
     const p = el('div','particle'); const size = rnd(opts.min||8, opts.max||18);
     p.style.cssText = `left:${opts.x + rnd(-opts.spread, opts.spread)}px;top:${opts.y + rnd(-(opts.vspread||10), opts.vspread||10)}px;width:${size}px;height:${size}px;border-radius:${opts.shape==='leaf'?'0 70% 0 70%':'50%'};background:${opts.color};opacity:1;transition:transform ${opts.dur||900}ms ease-out,opacity ${opts.dur||900}ms ease-in;z-index:30`;
     host.appendChild(p);
-    requestAnimationFrame(()=>requestAnimationFrame(()=>{ p.style.transform = `translate(${rnd(-opts.dx||-60, opts.dx||60)}px,${opts.dy!=null?opts.dy+rnd(-30,30):rnd(-160,-40)}px) rotate(${rnd(-180,180)}deg)`; p.style.opacity = 0; }));
+    requestAnimationFrame(()=>requestAnimationFrame(()=>{ p.style.transform = `translate(${rnd(-(opts.dx||60), opts.dx||60)}px,${opts.dy!=null?opts.dy+rnd(-30,30):rnd(-160,-40)}px) rotate(${rnd(-180,180)}deg)`; p.style.opacity = 0; }));
     setTimeout(()=>p.remove(), (opts.dur||900)+100);
   }
 }
 function shakeStage(){ stage.classList.remove('stage-shake'); void stage.offsetWidth; stage.classList.add('stage-shake'); setTimeout(()=>stage.classList.remove('stage-shake'), 450); }
-function confettiLeaves(){ for(let i=0;i<24;i++){ setTimeout(()=>{ const p = el('div','particle'); const s = rnd(18,34); p.style.cssText=`left:${rnd(0,1024)}px;top:-40px;width:${s}px;height:${s}px;border-radius:0 70% 0 70%;background:${['#4fbf6b','#F5A524','#6bd287','#f2c14e'][i%4]};transition:transform 2.4s ease-in,opacity 2.4s;z-index:30`; stage.appendChild(p); requestAnimationFrame(()=>requestAnimationFrame(()=>{ p.style.transform=`translate(${rnd(-120,120)}px,820px) rotate(${rnd(-540,540)}deg)`; p.style.opacity=.2; })); setTimeout(()=>p.remove(),2600); }, i*60); } }
+function confettiLeaves(){ for(let i=0;i<26;i++){ setTimeout(()=>{ const p = el('div','particle'); const s = rnd(18,34); p.style.cssText=`left:${rnd(0,1024)}px;top:-40px;width:${s}px;height:${s}px;border-radius:0 70% 0 70%;background:${['#4fbf6b','#F5A524','#6bd287','#f2c14e'][i%4]};transition:transform 2.4s ease-in,opacity 2.4s;z-index:30`; stage.appendChild(p); requestAnimationFrame(()=>requestAnimationFrame(()=>{ p.style.transform=`translate(${rnd(-120,120)}px,820px) rotate(${rnd(-540,540)}deg)`; p.style.opacity=.2; })); setTimeout(()=>p.remove(),2600); }, i*60); } }
 
 /* ---------- E1 START ---------- */
 const ENTER = {};
 ENTER.start = () => {
-  const m = $('#mascot-start'); m.innerHTML=''; m.appendChild(mascotEl('wave')); m.firstChild.style.cssText='width:100%;height:100%';
-  const host = $('#start-dino'); host.innerHTML=''; const d = dinoEl(DINOS[DINOS.length-1].id, 'breathe'); d.style.cssText='position:relative;width:100%;height:100%'; host.appendChild(d);
-  speak('Cześć, {imię}! Zostań odkrywcą dinozaurów. Dotknij zielonego guzika.', 600);
+  spriteInto($('#start-dino'), DINOS[DINOS.length-1].id);
+  guide('Cześć, {imię}! Dotknij zielonego guzika.', {delay:500});
 };
 bindTap($('#btn-play'), () => { SFX.chime(); go('camp'); });
-bindTap($('#btn-album-1'), () => { SFX.pop(); go('album'); });
-bindTap($('#btn-album-2'), () => { SFX.pop(); go('album'); });
+bindTap($('#btn-album'), () => { SFX.pop(); go('album'); });
 
 /* ---------- E2 OBÓZ ---------- */
-$('#tent').innerHTML = ART.tent();
+const MOUND_POS = [[261,419,251,192],[523,359,224,171],[722,468,236,180]]; // z Figmy (x,y,w,h halo)
 ENTER.camp = () => {
   const host = $('#mounds'); host.innerHTML = '';
-  const n = DINOS.length, perRow = Math.min(n, 3), rows = Math.ceil(n/perRow);
+  const n = DINOS.length;
   DINOS.forEach((d,i) => {
-    const row = Math.floor(i/perRow), col = i%perRow, inRow = Math.min(perRow, n-row*perRow);
-    const x = 512 - (inRow*280)/2 + col*280 + 25, y = rows===1 ? (col%2 ? 400 : 470) : 330 + row*220;
+    let r;
+    if(n<=3) r = MOUND_POS[i];
+    else { const perRow = 4, row = Math.floor(i/perRow), col = i%perRow; r = [90+col*230, 330+row*200, 200, 150]; }
     const m = el('div', 'mound' + (S.discovered[d.id] ? '' : ' locked'));
-    m.style.left = x+'px'; m.style.top = y+'px';
-    if(S.discovered[d.id]){ m.innerHTML = ART.mound().replace(/<g transform="rotate[\s\S]*?<\/g>/, ''); const st = el('div','sticker wobble'); const de = dinoEl(d.id); de.style.cssText='position:relative;width:88%;height:88%'; st.appendChild(de); m.appendChild(st); }
-    else m.innerHTML = ART.mound();
+    m.style.cssText = `left:${r[0]+14}px;top:${r[1]+18}px;width:${r[2]-28}px;height:${r[3]-36}px`;
+    if(S.discovered[d.id]){
+      m.innerHTML = `<div class="halo" style="background:rgba(255,255,255,.35)"></div>${ART.mound().replace(/<g transform="rotate[\s\S]*?<\/g>/, '')}<div class="peek">${spriteImg(`${d.id}_idle.png`)}</div><div class="badge">${ICON.check}</div>`;
+      if(!HAVE[`${d.id}_idle.png`]){ const pk = m.querySelector('.peek'); const de = dinoEl(d.id); de.style.cssText='position:absolute;inset:0'; pk.appendChild(de); }
+    } else m.innerHTML = `<div class="halo"></div>${ART.mound()}`;
     bindTap(m, () => { SFX.pop(); curDino = d.id; go(S.discovered[d.id] ? 'card' : 'dig', {dino:d.id}); });
     host.appendChild(m);
   });
-  speak('Gdzieś tu śpią kości dinozaurów. Dotknij kopca, żeby zacząć kopać.', 300);
+  guide('Wybierz kopiec. Tu śpią kości!', {delay:300});
 };
 
 /* ---------- E3 WYKOPALISKO ---------- */
-const sand = $('#sand'), sctx = sand.getContext('2d');
-$('#brush').innerHTML = `<svg viewBox="0 0 120 120"><rect x="52" y="6" width="18" height="70" rx="8" fill="#c4643a" ${OUT}/><path d="M36 72 h48 l6 30 q-30 14 -60 0 z" fill="#f3d9a8" ${OUT}/></svg>`;
+const sand = $('#sand'), sctx = sand.getContext('2d'); const SW = 884, SH = 540;
+$('#brush').innerHTML = `<svg viewBox="0 0 120 120"><g transform="rotate(-28 60 60)"><rect x="52" y="6" width="18" height="70" rx="8" fill="#c4643a" ${OUT}/><path d="M36 72 h48 l6 30 q-30 14 -60 0 z" fill="#f3d9a8" ${OUT}/></g></svg>`;
 function paintSand(){
-  const g = sctx.createRadialGradient(400,300,50,400,300,520); g.addColorStop(0,'#d9b87a'); g.addColorStop(1,'#b8935a');
-  sctx.globalCompositeOperation='source-over'; sctx.fillStyle = g; sctx.fillRect(0,0,800,600);
-  for(let i=0;i<1400;i++){ sctx.fillStyle = Math.random()<.5 ? 'rgba(255,240,200,.35)' : 'rgba(120,80,30,.25)'; sctx.beginPath(); sctx.arc(rnd(0,800), rnd(0,600), rnd(1,3.5), 0, 7); sctx.fill(); }
+  const g = sctx.createRadialGradient(SW/2,SH/2,60,SW/2,SH/2,560); g.addColorStop(0,'#dcbb7e'); g.addColorStop(1,'#c09a5e');
+  sctx.globalCompositeOperation='source-over'; sctx.clearRect(0,0,SW,SH); sctx.fillStyle = g; sctx.fillRect(0,0,SW,SH);
+  for(let i=0;i<1600;i++){ sctx.fillStyle = Math.random()<.5 ? 'rgba(255,240,200,.35)' : 'rgba(120,80,30,.22)'; sctx.beginPath(); sctx.arc(rnd(0,SW), rnd(0,SH), rnd(1,3.5), 0, 7); sctx.fill(); }
 }
-let digProgress = 0, digDone = false, digSampler = null;
+let digDone = false, digSampler = null, digging = false;
 function erase(x, y){
   sctx.globalCompositeOperation='destination-out';
-  const g = sctx.createRadialGradient(x,y,10,x,y,58); g.addColorStop(0,'rgba(0,0,0,1)'); g.addColorStop(0.7,'rgba(0,0,0,.6)'); g.addColorStop(1,'rgba(0,0,0,0)');
-  sctx.fillStyle = g; sctx.beginPath(); sctx.arc(x,y,58,0,7); sctx.fill();
+  const g = sctx.createRadialGradient(x,y,12,x,y,60); g.addColorStop(0,'rgba(0,0,0,1)'); g.addColorStop(0.7,'rgba(0,0,0,.6)'); g.addColorStop(1,'rgba(0,0,0,0)');
+  sctx.fillStyle = g; sctx.beginPath(); sctx.arc(x,y,60,0,7); sctx.fill();
 }
 function sampleProgress(){
-  const img = sctx.getImageData(80, 60, 640, 480).data; let clear=0, tot=0;
-  for(let y=0;y<480;y+=12) for(let x=0;x<640;x+=12){ tot++; if(img[(y*640+x)*4+3] < 60) clear++; }
+  const img = sctx.getImageData(48, 50, 790, 420).data; let clear=0, tot=0;
+  for(let y=0;y<420;y+=12) for(let x=0;x<790;x+=12){ tot++; if(img[(y*790+x)*4+3] < 60) clear++; }
   return clear/tot;
 }
 ENTER.dig = ({dino}) => {
-  curDino = dino; digProgress = 0; digDone = false;
-  const sk = $('#dig-skel'); sk.innerHTML=''; const s = skelEl(dino); s.style.cssText='position:absolute;inset:0'; sk.appendChild(s);
+  curDino = dino; digDone = false;
+  skelInto($('#dig-skel'), dino);
   sand.style.transition=''; sand.style.opacity = 1; paintSand();
-  const pr = $('#dig-progress'); pr.innerHTML = [0,1,2,3,4].map(()=>'<i>🦴</i>').join('');
-  speak('Potrzyj palcem piasek, żeby odkryć kości.', 300);
+  const dots = $('#dig-dots'); setDots(dots, 0);
+  guide('Wycieraj piasek pędzelkiem!', {delay:300});
   clearInterval(digSampler);
-  digSampler = setInterval(()=>{ if(digDone) return; const p = sampleProgress(); const lit = Math.min(5, Math.floor(p/0.15)); pr.querySelectorAll('i').forEach((i,k)=>{ if(k<lit && !i.classList.contains('on')){ i.classList.add('on'); SFX.bone(); } }); if(p >= 0.72) digFinish(); }, 250);
+  digSampler = setInterval(()=>{ if(digDone) return; const p = sampleProgress(); const lit = Math.min(5, Math.floor(p/0.15)); dots.querySelectorAll('i').forEach((i,k)=>{ if(k<lit && !i.classList.contains('on')){ i.classList.add('on'); SFX.bone(); if(k===2) guide('Widzę kości! Wycieraj dalej!'); } }); if(p >= 0.72) digFinish(); }, 250);
   cleanup = () => { clearInterval(digSampler); brushOff(); $('#brush').style.display='none'; };
 };
-let digging = false;
 sand.addEventListener('pointerdown', e => { if(digDone) return; digging = true; sand.setPointerCapture(e.pointerId); brushOn(); $('#brush').style.display='block'; digMove(e); });
 sand.addEventListener('pointermove', e => { if(digging && !digDone) digMove(e); });
 ['pointerup','pointercancel','lostpointercapture'].forEach(t => sand.addEventListener(t, () => { digging = false; brushOff(); $('#brush').style.display='none'; }));
 function digMove(e){
   const r = sand.getBoundingClientRect(); const x = (e.clientX - r.left)/SCALE, y = (e.clientY - r.top)/SCALE;
-  erase(x,y); const b = $('#brush'); b.style.left = x+'px'; b.style.top = y+'px';
-  if(Math.random()<.35) particles(2, { host:$('#s-dig .pit'), x, y, spread:20, color:'#e9d6a8', min:4, max:9, dur:500, dy:40 });
+  erase(x,y); const b = $('#brush'); b.style.left = (x+70)+'px'; b.style.top = (y+130)+'px';
+  if(Math.random()<.35) particles(2, { host:$('#s-dig'), x:x+70, y:y+130, spread:20, color:'#e9d6a8', min:4, max:9, dur:500, dy:40 });
 }
 function digFinish(){
   digDone = true; brushOff(); $('#brush').style.display='none';
   sand.style.transition='opacity .9s'; sand.style.opacity = 0;
   [0,200,400,600].forEach(d => setTimeout(()=>SFX.bone(), d)); setTimeout(()=>SFX.sparkle(), 500);
-  particles(30, { host:$('#s-dig .pit'), x:400, y:300, spread:300, vspread:200, color:'#fff7e6', min:6, max:14, dur:1200 });
-  speak('Brawo, {imię}! Znalazłeś wszystkie kości!', 200);
-  setTimeout(()=>{ if(cur==='dig') go('reveal', {dino:curDino}); }, 2600);
+  particles(30, { host:$('#s-dig'), x:512, y:400, spread:320, vspread:200, color:'#fff7e6', min:6, max:14, dur:1200 });
+  guide('Brawo, {imię}! Znalazłeś wszystkie kości!', {delay:200});
+  setTimeout(()=>{ if(cur==='dig') go('reveal', {dino:curDino}); }, 2800);
 }
 
 /* ---------- E4 OŻYWIENIE ---------- */
+$('#sparkles').innerHTML = [[290,150],[875,180],[315,565],[820,600],[670,88]].map(([x,y],i)=>`<div class="sparkle" style="left:${x}px;top:${y}px;animation-delay:${i*0.25}s">${ICON.sparkle}</div>`).join('');
 ENTER.reveal = ({dino}) => {
   const d = byId(dino); setHabitat($('#reveal-bg'), d);
-  const skHost = $('#reveal-skel'); skHost.innerHTML=''; const sk = skelEl(dino); sk.style.cssText='position:absolute;inset:0;transition:transform 1.2s ease-in-out,opacity .6s'; skHost.appendChild(sk);
-  const dHost = $('#reveal-dino'); dHost.innerHTML=''; const de = dinoEl(dino); de.style.cssText='position:absolute;inset:0'; dHost.appendChild(de);
-  dHost.style.transition='none'; dHost.style.opacity = 0; dHost.style.transform='scale(.7)';
-  const flash = $('#reveal-flash'); let done = false; const timers = [];
-  const T = (fn, ms) => timers.push(setTimeout(fn, ms));
-  T(()=>{ sk.style.transform='translateY(-40px)'; SFX.whoosh(); }, 300);
+  const sk = $('#reveal-skel'); sk.className='skel'; sk.style.opacity=''; skelInto(sk, dino);
+  const dh = $('#reveal-dino'); spriteInto(dh, dino, 'roar'); dh.style.opacity=0; dh.style.transform='scale(.7)';
+  const glow = $('#reveal-glow'); glow.style.opacity = 0; $('#brawo').classList.remove('on');
+  $('#s-reveal .kostek').classList.remove('on'); $('#s-reveal .guide').classList.remove('on'); $('#sparkles').style.display='none';
+  const flash = $('#reveal-flash'); const timers = []; const T = (fn, ms) => timers.push(setTimeout(fn, ms));
+  T(()=>{ glow.style.opacity = 1; SFX.whoosh(); }, 300);
   T(()=>{ particles(40, { x:512, y:600, spread:220, color:'#e9d6a8', min:14, max:40, dur:1400, dy:-200 }); SFX.sparkle(); }, 1100);
   T(()=>{ flash.style.transition='opacity .12s'; flash.style.opacity=.9; }, 1500);
-  T(()=>{ flash.style.transition='opacity .6s'; flash.style.opacity=0; sk.style.opacity=0; dHost.style.transition='opacity .5s,transform .5s'; dHost.style.opacity=1; dHost.style.transform='scale(1)'; particles(30, { x:512, y:450, spread:240, vspread:150, color:'#fff3b0', min:6, max:16, dur:1000 }); }, 1650);
-  T(()=>{ setPose(de,'roar'); roar(d.voice.sound); shakeStage(); }, 2300);
-  T(()=>{ setPose(de,'idle'); speak(d.greeting); }, 3500);
-  T(()=>{ if(!S.discovered[dino]){ S.discovered[dino] = Date.now(); save(); } }, 3600);
-  T(()=>{ if(cur==='reveal') go('card', {dino}); }, 5600);
-  cleanup = () => { timers.forEach(clearTimeout); flash.style.opacity=0; done = true; };
+  T(()=>{ flash.style.transition='opacity .6s'; flash.style.opacity=0; sk.classList.add('memory'); dh.style.opacity=1; dh.style.transform='scale(1)'; $('#sparkles').style.display=''; particles(30, { x:640, y:400, spread:240, vspread:150, color:'#fff3b0', min:6, max:16, dur:1000 }); }, 1650);
+  T(()=>{ roar(d.voice.sound); shakeStage(); $('#brawo').classList.add('on'); SFX.fanfare(); }, 2200);
+  T(()=>{ $('#s-reveal .kostek').classList.add('on'); $('#s-reveal .guide').classList.add('on'); guide(`Brawo! To ${d.name}!`); }, 3000);
+  T(()=>{ pose(dh,'idle'); if(!S.discovered[dino]){ S.discovered[dino] = Date.now(); save(); } }, 3800);
+  T(()=>{ if(cur==='reveal') go('card', {dino}); }, 6500);
+  let canSkip = false; T(()=>canSkip=true, 3200);
+  const skip = () => { if(canSkip && cur==='reveal') go('card', {dino}); };
+  $('#s-reveal').addEventListener('pointerdown', skip);
+  cleanup = () => { timers.forEach(clearTimeout); flash.style.opacity=0; $('#s-reveal').removeEventListener('pointerdown', skip); };
 };
 
 /* ---------- E5 KARTA ---------- */
 let cardDino = null;
+const MOUTH = { trex:[640,250], trice:[600,340], brachio:[620,175] };
 ENTER.card = ({dino}) => {
   const d = byId(dino); curDino = dino; setHabitat($('#card-bg'), d);
-  const host = $('#card-dino'); host.innerHTML=''; cardDino = dinoEl(dino); cardDino.style.cssText='position:absolute;inset:0'; host.appendChild(cardDino);
-  host.classList.add('breathe'); $('#sizescene').classList.remove('on'); $('#sizescene').innerHTML=''; $('#food').innerHTML=''; $('#food').style.left='1100px';
-  $('#s-card .btn[data-act="food"] .ic').textContent = d.food.item==='meat' ? '🍖' : '🌿';
-  speak(`${d.name}. Dotknij kółek, żeby go poznać, albo zielonego guzika, żeby zagrać.`, 300);
+  $('#card-name').textContent = (d.title || d.name).toUpperCase();
+  cardDino = $('#card-dino'); spriteInto(cardDino, dino);
+  $('#sizescene').classList.remove('on'); $('#sizescene').innerHTML=''; $('#food').innerHTML=''; $('#food').style.left='900px'; $('#food').style.top='200px';
+  const fb = $('#btn-food'); fb.innerHTML = HAVE[`food_${d.food.item}.png`] ? `<img src="assets/food_${d.food.item}.png" alt="">` : ART.food(d.food.item); if(!HAVE[`food_${d.food.item}.png`]) fb.firstElementChild.style.cssText='width:72px;height:72px';
+  guide('Dotknij obrazka. Posłuchaj i pobaw się!', {delay:300});
   cleanup = () => { busy = false; };
 };
-bindTap($('#card-dino'), () => { if(busy) return; const h = $('#card-dino'); h.classList.remove('tickle'); void h.offsetWidth; h.classList.add('tickle'); SFX.giggle(); });
+bindTap($('#card-dino'), () => { if(busy) return; const h = $('#card-dino'); h.classList.remove('tickle'); void h.offsetWidth; h.classList.add('tickle'); SFX.giggle(); guide(['Hihi, to łaskocze!','Lubi głaskanie!','Ale się cieszy!'][Math.floor(Math.random()*3)]); });
 bindTap($('#btn-game'), () => { SFX.chime(); go('game', {dino:curDino}); });
-$$('#s-card .btn[data-act]').forEach(b => bindTap(b, () => ACT[b.dataset.act]()));
+$$('#s-card .rbtn[data-act]').forEach(b => bindTap(b, () => ACT[b.dataset.act]()));
 const ACT = {
-  voice(){ if(busy) return; busy = true; const d = byId(curDino); SFX.pop(); setPose(cardDino,'roar'); roar(d.voice.sound); if(d.id==='trex') shakeStage(); setTimeout(()=>{ setPose(cardDino,'idle'); speak(d.voice.text); busy=false; }, 1500); },
-  food(){ if(busy) return; busy = true; const d = byId(curDino); SFX.pop(); const f = $('#food'); f.innerHTML=''; f.appendChild(foodEl(d.food.item)); f.firstChild.style.cssText='width:100%;height:100%'; f.style.transform='scale(1)'; f.style.left='1100px';
-    requestAnimationFrame(()=>requestAnimationFrame(()=>{ f.style.left = d.id==='brachio' ? '560px' : '600px'; f.style.bottom = d.id==='brachio' ? '560px' : (d.id==='trex' ? '420px' : '330px'); }));
-    setTimeout(()=>{ let n=0; const chew = setInterval(()=>{ setPose(cardDino, n%2 ? 'idle':'roar'); SFX.chomp(); f.style.transform = `scale(${1 - (n+1)*0.28})`; n++; if(n>=3){ clearInterval(chew); setPose(cardDino,'idle'); f.style.left='1100px'; f.style.transform='scale(1)'; speak(d.food.text); busy=false; } }, 380); }, 900);
+  voice(){ if(busy) return; busy = true; const d = byId(curDino); SFX.pop(); pose(cardDino,'roar'); roar(d.voice.sound); if(d.id==='trex') shakeStage(); setTimeout(()=>{ pose(cardDino,'idle'); guide(d.voice.text); busy=false; }, 1500); },
+  food(){ if(busy) return; busy = true; const d = byId(curDino); SFX.pop(); const f = $('#food'); f.innerHTML = HAVE[`food_${d.food.item}.png`] ? `<img src="assets/food_${d.food.item}.png" alt="">` : ART.food(d.food.item); f.style.transform='scale(.4)'; f.style.left='840px'; f.style.top='150px';
+    const [mx,my] = MOUTH[d.id] || [600,300];
+    requestAnimationFrame(()=>requestAnimationFrame(()=>{ f.style.transform='scale(1)'; f.style.left = (mx-100)+'px'; f.style.top = (my-100)+'px'; }));
+    setTimeout(()=>{ let n=0; const chew = setInterval(()=>{ pose(cardDino, n%2 ? 'idle':'roar'); SFX.chomp(); f.style.transform = `scale(${1 - (n+1)*0.3})`; n++; if(n>=3){ clearInterval(chew); pose(cardDino,'idle'); f.innerHTML=''; f.style.left='900px'; f.style.top='200px'; guide(d.food.text); busy=false; } }, 400); }, 900);
   },
-  size(){ if(busy) return; busy = true; const d = byId(curDino); SFX.whoosh(); const sc = $('#sizescene'); sc.innerHTML=''; sc.classList.add('on');
-    const CMPW = { bus:12, car:4.5, house:7.2 }[d.size.cmp]; const ppm = Math.min(900 / (CMPW + d.size.len + 2.5), 480 / (d.size.len*0.75));
-    const CMP = { bus:{w:12,h:3.6,vb:[400,160]}, car:{w:4.5,h:1.8,vb:[300,130]}, house:{w:7.2,h:13,vb:[240,400]} }[d.size.cmp];
-    const cmpEl = el('div','cmp'); cmpEl.innerHTML = ART.cmp(d.size.cmp); cmpEl.style.cssText = `left:30px;bottom:150px;width:${CMP.w*ppm}px;height:${CMP.h*ppm}px`; cmpEl.firstChild.style.cssText='width:100%;height:100%';
-    const kid = mascotEl('idle'); kid.classList.add('kid'); const kh = Math.max(ppm*1.0, 48); kid.style.cssText = `position:absolute;left:${30+CMP.w*ppm+20}px;bottom:150px;width:${kh*0.66}px;height:${kh}px`;
-    const dw = d.size.len*ppm, dh = dw*0.75; const de = dinoEl(d.id,'breathe'); de.style.cssText = `position:absolute;right:20px;bottom:150px;width:${dw}px;height:${dh}px;transform-origin:100% 100%;transform:scale(.2);transition:transform .8s cubic-bezier(.3,1.4,.5,1)`;
-    const bg = el('div'); bg.style.cssText='position:absolute;inset:0;background:rgba(255,255,255,.45)';
-    sc.append(bg, cmpEl, kid, de); $('#card-dino').style.visibility='hidden';
+  size(){ if(busy) return; busy = true; const d = byId(curDino); SFX.whoosh(); const sc = $('#sizescene'); sc.innerHTML='<div class="veil"></div>'; sc.classList.add('on');
+    const CMP = { bus:{w:12,h:3.4}, car:{w:4.5,h:1.7}, house:{w:7.2,h:13} }[d.size.cmp];
+    const ppm = Math.min(940 / (CMP.w + d.size.len + 1.6), 470 / Math.max(CMP.h, d.size.len*0.83));
+    const groundY = 620; // linia ziemi
+    const cmpEl = el('div','sprite'); cmpEl.innerHTML = ART.cmp(d.size.cmp); cmpEl.style.cssText = `left:30px;top:${groundY-CMP.h*ppm}px;width:${CMP.w*ppm}px;height:${CMP.h*ppm}px`; cmpEl.firstChild.style.cssText='width:100%;height:100%;filter:drop-shadow(0 10px 8px rgba(0,0,0,.25))';
+    const kh = Math.max(ppm*1.0, 44); const kid = el('div','kostek'); kostekInto(kid,'wave'); kid.style.cssText = `left:${30+CMP.w*ppm+16}px;top:${groundY-kh}px;width:${kh*0.6}px;height:${kh}px;z-index:2`;
+    const dw = d.size.len*ppm, dhh = dw*0.83; const de = el('div','sprite'); spriteInto(de, d.id); de.style.cssText = `left:${30+CMP.w*ppm+16+kh*0.6+12}px;top:${groundY-dhh}px;width:${dw}px;height:${dhh}px;transform-origin:0 100%;transform:scale(.2);transition:transform .8s cubic-bezier(.3,1.4,.5,1)`;
+    const t1 = el('div','tape'); t1.style.cssText = `left:30px;top:${groundY+18}px;width:${CMP.w*ppm}px`; const t2 = el('div','tape'); t2.style.cssText = `left:${parseFloat(de.style.left)}px;top:${groundY+18}px;width:${dw}px`;
+    const g1 = el('div','tag', `${CMP.w} m`); g1.style.cssText=`left:${30+CMP.w*ppm/2-40}px;top:${groundY+50}px`; const g2 = el('div','tag', `${d.size.len} m`); g2.style.cssText=`left:${parseFloat(de.style.left)+dw/2-40}px;top:${groundY+50}px`;
+    sc.append(cmpEl, kid, de, t1, t2, g1, g2); ['#card-dino','#s-card .col','#btn-game','#card-name','#s-card .kostek'].forEach(q=>$(q).style.visibility='hidden');
     requestAnimationFrame(()=>requestAnimationFrame(()=>{ de.style.transform='scale(1)'; }));
-    setTimeout(()=>speak(d.size.text), 700);
-    const close = () => { sc.classList.remove('on'); sc.innerHTML=''; $('#card-dino').style.visibility=''; busy=false; };
-    sc.onpointerdown = close; setTimeout(()=>{ if(sc.classList.contains('on')) close(); }, 8000);
+    setTimeout(()=>guide(d.size.text), 500);
+    const close = () => { sc.classList.remove('on'); sc.innerHTML=''; ['#card-dino','#s-card .col','#btn-game','#card-name','#s-card .kostek'].forEach(q=>$(q).style.visibility=''); busy=false; };
+    sc.onpointerdown = close; setTimeout(()=>{ if(sc.classList.contains('on')) close(); }, 9000);
   },
-  fact(){ if(busy) return; busy = true; const d = byId(curDino); SFX.sparkle(); speak(d.fact.text);
-    const host = $('#card-dino');
-    if(d.fact.anim==='neckup'){ const n = cardDino.querySelector('.d-neck'); if(n){ n.style.transform='rotate(-14deg)'; setTimeout(()=>n.style.transform='',2200); } else setPose(cardDino,'roar'); }
-    else { host.classList.add(d.fact.anim); cardDino.classList.add(d.fact.anim); setTimeout(()=>{ host.classList.remove(d.fact.anim); cardDino.classList.remove(d.fact.anim); }, 2400); }
-    setTimeout(()=>{ setPose(cardDino,'idle'); busy=false; }, 2500);
+  fact(){ if(busy) return; busy = true; const d = byId(curDino); SFX.sparkle(); guide(d.fact.text);
+    if(d.fact.anim==='neckup' || d.id==='brachio'){ pose(cardDino,'roar'); }
+    else { cardDino.classList.remove('wiggle'); void cardDino.offsetWidth; cardDino.classList.add('wiggle'); if(d.id==='trice') pose(cardDino,'roar'); }
+    setTimeout(()=>{ pose(cardDino,'idle'); cardDino.classList.remove('wiggle'); busy=false; }, 2500);
   }
 };
 
 /* ---------- E6 GIERKI ---------- */
 let score = 0, gameObj = null;
-function counterInit(icon){ const c = $('#counter'); c.innerHTML = [0,1,2,3,4].map(()=>`<i>${icon}</i>`).join(''); score = 0; }
-function counterHit(){ score++; const i = $('#counter').children[score-1]; if(i) i.classList.add('on'); return score>=5; }
+function counterHit(){ score++; setDots($('#game-dots'), score); return score>=5; }
 ENTER.game = ({dino}) => {
   const d = byId(dino); curDino = dino; setHabitat($('#game-bg'), d);
-  const layer = $('#game-layer'); layer.innerHTML=''; gameObj = GAMES[d.game];
-  counterInit(gameObj.icon); gameObj.setup(layer, d);
-  speak(gameObj.intro, 400);
+  const layer = $('#game-layer'); layer.innerHTML=''; gameObj = GAMES[d.game]; score = 0; setDots($('#game-dots'), 0);
+  gameObj.setup(layer, d);
+  guide(gameObj.intro, {delay:400});
   cleanup = () => { if(gameObj.teardown) gameObj.teardown(); layer.innerHTML=''; };
 };
 function fiesta(text, after){
-  busy = true; SFX.fanfare(); confettiLeaves(); speak(text, 300);
-  setTimeout(()=>{ busy = false; if(cur==='game'){ counterInit(gameObj.icon); after && after(); } }, 4200);
+  busy = true; SFX.fanfare(); confettiLeaves(); guide(text, {delay:300});
+  const k = $('#s-game .kostek'); k.classList.remove('jump'); void k.offsetWidth; k.classList.add('jump');
+  setTimeout(()=>{ busy = false; if(cur==='game'){ score = 0; setDots($('#game-dots'), 0); after && after(); guide(gameObj.intro); } }, 4600);
 }
+function mkTarget(cls, x, y, inner){ const t = el('div','target '+cls); t.style.left=x+'px'; t.style.top=y+'px'; t.innerHTML = inner; return t; }
 const GAMES = {
   /* Brachiozaur – listki z drzew */
-  leaves: { icon:'🍃', intro:'Brachiozaur jest głodny. Dotknij listka, żeby go zjadł!', hint:'Dotknij listka na drzewie.',
+  leaves: { icon:'🍃', intro:'Znajdź pięć liści dla Brachio!', react:['Mniam!','Pycha!','Jeszcze!','Prawie pełny brzuszek!','Ostatni listek!'],
     setup(layer, d){
-      [[600,300,440],[860,290,500]].forEach(([x,b,h])=>{ const t = el('div','tree'); t.style.cssText=`left:${x}px;bottom:${b}px;width:${h/2}px;height:${h}px`; t.innerHTML = ART.tree(); layer.appendChild(t); });
-      const dh = el('div','dino'); dh.id='g-dino'; dh.style.cssText='left:200px;bottom:150px;width:520px;height:520px'; const de = dinoEl(d.id,'breathe'); de.style.cssText='position:absolute;inset:0'; dh.appendChild(de); layer.appendChild(dh);
-      this.de = de; this.spawn(layer);
+      const dh = el('div','sprite breathe'); dh.style.cssText='left:100px;top:145px;width:600px;height:575px;transition:transform .5s'; spriteInto(dh, d.id); layer.appendChild(dh); this.dh = dh;
+      this.spawn(layer);
     },
     spawn(layer){
-      layer.querySelectorAll('.target').forEach(t=>t.remove());
-      [[590,150],[690,250],[760,110],[870,200],[940,300]].forEach(([x,y])=>{ const l = el('div','target leaf'); l.style.left=x+'px'; l.style.top=y+'px'; l.innerHTML = ART.leaf(); layer.appendChild(l); bindTap(l, ()=>this.eat(l, layer)); });
+      layer.querySelectorAll('.target,.flyleaf').forEach(t=>t.remove());
+      const img = HAVE['food_leaves.png'] ? `<img src="assets/food_leaves.png" alt="">` : ART.leaf();
+      [[696,151],[844,221],[721,336],[856,456],[686,556]].forEach(([x,y])=>{ const l = mkTarget('leaf', x, y, img); layer.appendChild(l); bindTap(l, ()=>this.eat(l, layer)); });
     },
     eat(leaf, layer){
       if(busy || leaf.dataset.done) return; busy = true; leaf.dataset.done = 1;
-      const lx = leaf.offsetLeft+60, ly = leaf.offsetTop+60;
-      const neck = this.de.querySelector('.d-neck');
-      if(neck){ const ox = 200+255*1.3, oy = 768-150-520+180*1.3; const base = Math.atan2(40-180, 340-255); const ang = Math.atan2(ly-oy, lx-ox); let rot = (ang-base)*180/Math.PI; rot = Math.max(-45, Math.min(55, rot)); neck.style.transform = `rotate(${rot}deg) scale(${lx>800?1.12:1})`; }
-      else setPose(this.de,'roar');
-      setTimeout(()=>{ this.de.classList.add('roar'); SFX.crunch(); leaf.style.transition='transform .25s,opacity .25s'; leaf.style.transform='scale(.2)'; leaf.style.opacity=0; particles(8,{x:lx,y:ly,spread:30,color:'#4fbf6b',shape:'leaf',min:8,max:16}); }, 520);
-      setTimeout(()=>{ this.de.classList.remove('roar'); SFX.chomp(); }, 820);
-      setTimeout(()=>{ if(neck) neck.style.transform=''; else setPose(this.de,'idle'); leaf.remove(); const full = counterHit(); busy = false;
-        if(full){ SFX.burp(); this.de.classList.add('tickle'); setTimeout(()=>this.de.classList.remove('tickle'),700); fiesta('Brachiozaur jest najedzony! Jadł liście z samych czubków drzew.', ()=>this.spawn(layer)); }
-      }, 1250);
+      const lx = leaf.offsetLeft+59, ly = leaf.offsetTop+59;
+      pose(this.dh,'roar'); this.dh.style.transform = `translate(${Math.min(60,(lx-640)/4)}px,${Math.min(0,(ly-205)/5)}px)`;
+      const fl = el('div','flyleaf'); fl.innerHTML = leaf.innerHTML; fl.style.left=(lx-46)+'px'; fl.style.top=(ly-46)+'px'; layer.appendChild(fl); leaf.classList.add('eaten');
+      requestAnimationFrame(()=>requestAnimationFrame(()=>{ fl.style.left='600px'; fl.style.top='170px'; fl.style.transform='scale(.5) rotate(-30deg)'; }));
+      setTimeout(()=>{ SFX.crunch(); fl.remove(); particles(8,{x:640,y:205,spread:30,color:'#4fbf6b',shape:'leaf',min:8,max:16}); }, 520);
+      setTimeout(()=>{ pose(this.dh,'idle'); SFX.chomp(); }, 820);
+      setTimeout(()=>{ this.dh.style.transform=''; leaf.remove(); const full = counterHit(); busy = false;
+        if(full){ SFX.burp(); this.dh.classList.add('tickle'); setTimeout(()=>this.dh.classList.remove('tickle'),700); fiesta('Brachiozaur jest najedzony! Jadł liście z samych czubków drzew.', ()=>this.spawn(layer)); }
+        else guide(this.react[score-1]);
+      }, 1150);
     }
   },
   /* Triceratops – jajka w paprociach */
-  eggs: { icon:'🥚', intro:'Mama Triceratops szuka jajek. Dotknij paproci!', hint:'Dotknij paproci, żeby znaleźć jajko.',
+  eggs: { icon:'🥚', intro:'Mama Triceratops szuka jajek. Dotknij paproci!', react:['Jest jajko!','Drugie jajko!','Trzecie!','Jeszcze jedno!','Wszystkie jajka w gnieździe!'],
     setup(layer, d){
-      const nest = el('div','nest'); nest.style.cssText='left:470px;top:560px'; nest.innerHTML = ART.nest(); layer.appendChild(nest); this.nest = nest;
-      const dh = el('div','dino'); dh.style.cssText='left:30px;bottom:150px;width:440px;height:440px'; const de = dinoEl(d.id,'breathe'); de.style.cssText='position:absolute;inset:0'; dh.appendChild(de); layer.appendChild(dh); this.de = de;
+      const nest = el('div','nest'); nest.style.cssText='left:560px;top:600px'; nest.innerHTML = ART.nest(); layer.appendChild(nest); this.nest = nest;
+      const dh = el('div','sprite breathe'); dh.style.cssText='left:70px;top:250px;width:500px;height:470px'; spriteInto(dh, d.id); layer.appendChild(dh); this.dh = dh;
       this.spawn(layer);
     },
     spawn(layer){
       layer.querySelectorAll('.target,.egg,.baby,.surprise').forEach(t=>t.remove()); this.eggs = [];
-      const pos = [[760,600],[900,590],[560,410],[700,430],[850,440],[960,500],[620,290]];
+      const img = HAVE['food_fern.png'] ? `<img src="assets/food_fern.png" alt="">` : ART.fern();
+      const pos = [[690,130],[850,180],[720,300],[880,330],[640,440],[860,470],[500,520]];
       const kinds = ['egg','egg','egg','egg','egg','🦋','🐸'].sort(()=>Math.random()-.5);
-      pos.forEach(([x,y],i)=>{ const f = el('div','target fern'); f.style.left=x+'px'; f.style.top=y+'px'; f.innerHTML = ART.fern(); f.dataset.kind = kinds[i]; layer.appendChild(f); bindTap(f, ()=>this.open(f, layer)); });
+      pos.forEach(([x,y],i)=>{ const f = mkTarget('fern', x, y, img); f.dataset.kind = kinds[i]; layer.appendChild(f); bindTap(f, ()=>this.open(f, layer)); });
     },
     open(f, layer){
-      if(busy || f.dataset.done) return; f.dataset.done = 1; f.classList.add('shake'); SFX.pop();
-      const x = f.offsetLeft+45, y = f.offsetTop+20;
-      if(f.dataset.kind !== 'egg'){ const s = el('div','surprise', f.dataset.kind); s.style.cssText=`position:absolute;left:${x}px;top:${y}px;font-size:70px;transition:transform 1.6s ease-out,opacity 1.6s;z-index:5`; layer.appendChild(s); SFX.squeak(); requestAnimationFrame(()=>requestAnimationFrame(()=>{ s.style.transform=`translate(${rnd(-80,80)}px,-260px)`; s.style.opacity=0; })); setTimeout(()=>s.remove(),1700); f.style.opacity=.55; return; }
-      busy = true; const egg = el('div','egg'); egg.innerHTML = ART.egg(); egg.style.left=x+'px'; egg.style.top=y+'px'; layer.appendChild(egg); this.eggs.push(egg); f.style.opacity=.55;
+      if(busy || f.classList.contains('done')) return; f.classList.add('done','shake'); SFX.pop();
+      const x = f.offsetLeft+40, y = f.offsetTop+20;
+      if(f.dataset.kind !== 'egg'){ const s = el('div','surprise', f.dataset.kind); s.style.left=x+'px'; s.style.top=y+'px'; layer.appendChild(s); SFX.squeak(); guide(f.dataset.kind==='🦋' ? 'Motylek! Szukaj dalej.' : 'Żabka! Szukaj dalej.'); requestAnimationFrame(()=>requestAnimationFrame(()=>{ s.style.transform=`translate(${rnd(-80,80)}px,-260px)`; s.style.opacity=0; })); setTimeout(()=>s.remove(),1700); return; }
+      busy = true; const egg = el('div','egg'); egg.innerHTML = ART.egg(); egg.style.left=x+'px'; egg.style.top=y+'px'; layer.appendChild(egg); this.eggs.push(egg);
       const slot = this.eggs.length-1;
-      setTimeout(()=>{ egg.style.left = (500+slot*42)+'px'; egg.style.top='555px'; egg.style.transform='rotate(360deg)'; }, 350);
-      setTimeout(()=>{ SFX.plop(); this.de.classList.add('roar'); tone('sine', 90, 60, 0.25, 0.5); setTimeout(()=>this.de.classList.remove('roar'), 400); const full = counterHit(); busy = false;
-        if(full){ this.hatch(layer); }
+      setTimeout(()=>{ egg.style.left = (590+slot*44)+'px'; egg.style.top='596px'; egg.style.transform='rotate(360deg)'; }, 350);
+      setTimeout(()=>{ SFX.plop(); pose(this.dh,'roar'); tone('sine', 90, 60, 0.25, 0.5); setTimeout(()=>pose(this.dh,'idle'), 450); const full = counterHit(); busy = false;
+        if(full) this.hatch(layer); else guide(this.react[score-1]);
       }, 1450);
     },
     hatch(layer){
       busy = true;
-      this.eggs.forEach((egg,i)=>setTimeout(()=>{ SFX.hatch(); const b = el('div','baby'); b.style.left = (egg.offsetLeft-20)+'px'; b.style.top = (egg.offsetTop-30)+'px'; b.style.animationDelay = (i*0.1)+'s'; const de = dinoEl('trice'); de.style.cssText='position:absolute;inset:0'; b.appendChild(de); if(HAVE['baby_trice.png']) b.innerHTML=`<img src="assets/baby_trice.png" style="width:100%;height:100%;object-fit:contain">`; layer.appendChild(b); egg.remove(); particles(6,{x:egg.offsetLeft+35,y:egg.offsetTop+40,spread:20,color:'#fff6dc',min:6,max:12}); }, i*350));
+      this.eggs.forEach((egg,i)=>setTimeout(()=>{ SFX.hatch(); const b = el('div','baby'); b.style.left = (egg.offsetLeft-25)+'px'; b.style.top = (egg.offsetTop-30)+'px'; b.style.animationDelay = (i*0.1)+'s'; b.innerHTML = HAVE['baby_trice.png'] ? `<img src="assets/baby_trice.png" alt="">` : ''; if(!HAVE['baby_trice.png']){ const de = dinoEl('trice'); de.style.cssText='position:absolute;inset:0'; b.appendChild(de); } layer.appendChild(b); egg.remove(); particles(6,{x:egg.offsetLeft+35,y:egg.offsetTop+40,spread:20,color:'#fff6dc',min:6,max:12}); }, i*350));
       setTimeout(()=>fiesta('Triceratopsy żyły w rodzinach i pilnowały swoich jajek!', ()=>this.spawn(layer)), 1900);
     }
   },
   /* Tyranozaur – wielkie kroki */
-  steps: { icon:'🐾', intro:'Tyranozaur idzie na spacer. Dotknij śladu stopy!', hint:'Dotknij śladu stopy.',
+  steps: { icon:'🐾', intro:'Tyranozaur idzie na spacer. Dotknij śladu stopy!', react:['Jeden!','Dwa!','Trzy!','Cztery!','Pięć!'],
     setup(layer, d){
-      [[250,250,380],[640,250,420]].forEach(([x,b,h])=>{ const t = el('div','tree'); t.style.cssText=`left:${x}px;bottom:${b}px;width:${h/2}px;height:${h}px`; t.innerHTML = ART.tree(); layer.appendChild(t); });
-      const dh = el('div','dino'); dh.style.cssText='left:20px;bottom:150px;width:380px;height:380px;transition:left .75s ease-in-out'; const de = dinoEl(d.id,'breathe'); de.style.cssText='position:absolute;inset:0'; dh.appendChild(de); layer.appendChild(dh); this.dh = dh; this.de = de; this.x = 20;
-      this.layer = layer; this.next();
+      const dh = el('div','sprite breathe'); dh.style.cssText='left:190px;top:300px;width:400px;height:400px;transition:left .75s ease-in-out'; spriteInto(dh, d.id); layer.appendChild(dh); this.dh = dh; this.x = 190; this.layer = layer; this.next();
     },
-    next(){
-      const f = el('div','target foot'); this.foot = f; f.innerHTML = ART.foot(); f.style.left = (this.x+300)+'px'; f.style.top = '540px'; this.layer.appendChild(f); bindTap(f, ()=>this.step());
-    },
+    next(){ const f = mkTarget('foot', this.x+330, 590, ICON.foot); this.foot = f; this.layer.appendChild(f); bindTap(f, ()=>this.step()); },
     step(){
       if(busy) return; busy = true; const f = this.foot; f.style.animation='none'; f.style.opacity=.5;
-      setPose(this.de,'walk'); this.x += 130; this.dh.style.left = this.x+'px'; SFX.click();
-      setTimeout(()=>{ setPose(this.de,'idle'); SFX.stomp(); shakeStage(); f.remove(); particles(10,{x:this.x+200,y:600,spread:60,color:'#8a6a3a',min:6,max:14,dur:700});
-        this.birds(); const n = counterHit(); speak(['Jeden!','Dwa!','Trzy!','Cztery!','Pięć!'][score-1]);
+      pose(this.dh,'walk'); this.x += 90; this.dh.style.left = this.x+'px'; SFX.click();
+      setTimeout(()=>{ pose(this.dh,'idle'); SFX.stomp(); shakeStage(); f.remove(); particles(10,{x:this.x+250,y:690,spread:60,color:'#8a6a3a',min:6,max:14,dur:700});
+        this.birds(); const n = counterHit(); guide(this.react[score-1]);
         if(n){ setTimeout(()=>this.finale(), 900); } else { busy = false; this.next(); }
       }, 800);
     },
-    birds(){ for(let i=0;i<3;i++){ const b = el('div','bird'); b.innerHTML = ART.bird(); b.style.cssText=`left:${rnd(250,700)}px;top:${rnd(180,300)}px;transition:transform 1.6s ease-out,opacity 1.6s`; this.layer.appendChild(b); requestAnimationFrame(()=>requestAnimationFrame(()=>{ b.style.transform=`translate(${rnd(200,400)}px,-${rnd(250,400)}px)`; b.style.opacity=0; })); setTimeout(()=>b.remove(),1700); } },
+    birds(){ for(let i=0;i<3;i++){ const b = el('div','bird'); b.innerHTML = ART.bird(); b.style.cssText=`left:${rnd(250,700)}px;top:${rnd(160,300)}px;transition:transform 1.6s ease-out,opacity 1.6s`; this.layer.appendChild(b); requestAnimationFrame(()=>requestAnimationFrame(()=>{ b.style.transform=`translate(${rnd(200,400)}px,-${rnd(250,400)}px)`; b.style.opacity=0; })); setTimeout(()=>b.remove(),1700); } },
     finale(){
-      setPose(this.de,'roar'); roar('trex'); shakeStage(); confettiLeaves();
-      const again = () => { if(cur!=='game') return; setPose(this.de,'roar'); roar('trex'); shakeStage(); setTimeout(()=>setPose(this.de,'idle'),1200); };
+      pose(this.dh,'roar'); roar('trex'); shakeStage(); confettiLeaves();
+      const again = () => { if(cur!=='game') return; pose(this.dh,'roar'); roar('trex'); shakeStage(); setTimeout(()=>pose(this.dh,'idle'),1200); };
       this.layer.addEventListener('pointerdown', again); this.againFn = again;
-      setTimeout(()=>setPose(this.de,'idle'), 1400);
-      fiesta('Tyranozaur miał wielkie nogi i tupał tak, że drżała ziemia! Dotknij ekranu, żeby ryknął jeszcze raz.', ()=>{ this.layer.removeEventListener('pointerdown', again); this.dh.style.transition='none'; this.dh.style.opacity=0; this.x = 20; this.dh.style.left='20px'; setTimeout(()=>{ this.dh.style.transition='left .75s ease-in-out, opacity .5s'; this.dh.style.opacity=1; this.next(); },80); });
+      setTimeout(()=>pose(this.dh,'idle'), 1400);
+      fiesta('Tyranozaur tupał tak, że drżała ziemia! Dotknij ekranu, żeby ryknął jeszcze raz.', ()=>{ this.layer.removeEventListener('pointerdown', again); this.dh.style.transition='none'; this.dh.style.opacity=0; this.x = 190; this.dh.style.left='190px'; setTimeout(()=>{ this.dh.style.transition='left .75s ease-in-out, opacity .5s'; this.dh.style.opacity=1; this.next(); },80); });
     },
     teardown(){ if(this.againFn) this.layer.removeEventListener('pointerdown', this.againFn); }
   }
@@ -961,23 +1074,29 @@ const GAMES = {
 /* ---------- E7 ALBUM ---------- */
 ENTER.album = () => {
   const b = $('#album-board'); b.innerHTML='';
-  DINOS.forEach(d => {
-    const st = el('div','sticker' + (S.discovered[d.id] ? ' wobble' : ' locked'));
-    if(S.discovered[d.id]){ const de = dinoEl(d.id); de.style.cssText='position:relative;width:88%;height:88%'; st.appendChild(de); bindTap(st, ()=>{ SFX.chime(); curDino = d.id; go('card',{dino:d.id}); }); }
-    else { st.textContent = '?'; bindTap(st, ()=>{ SFX.pop(); speak('Tego dinozaura trzeba najpierw wykopać!'); setTimeout(()=>go('camp'), 1600); }); }
-    b.appendChild(st);
+  const n = DINOS.length, gap = 49, w = 270, total = n*w + (n-1)*gap, x0 = Math.max(20, (1024-total)/2);
+  DINOS.forEach((d,i) => {
+    const disc = !!S.discovered[d.id];
+    const c = el('div','card' + (disc ? '' : ' locked')); c.style.left = (x0 + i*(w+gap))+'px'; c.style.setProperty('--c', d.card || 'var(--leaf)');
+    if(n>3){ c.style.transform = `scale(${Math.min(1, (1024-40)/total)})`; c.style.transformOrigin='0 0'; }
+    c.innerHTML = `<div class="pic">${spriteImg(`${d.id}_idle.png`)}</div><div class="nm">${d.name.toUpperCase()}</div>` + (disc ? `<div class="badge">${ICON.check}</div>` : `<div class="q">?</div>`);
+    if(!HAVE[`${d.id}_idle.png`]){ const de = dinoEl(d.id); de.style.cssText='position:relative;width:100%;height:100%'; c.querySelector('.pic').appendChild(de); }
+    bindTap(c, () => { SFX.pop(); if(disc){ curDino = d.id; go('card',{dino:d.id}); } else { guide('Tego dinozaura trzeba najpierw wykopać!'); setTimeout(()=>{ if(cur==='album') go('camp'); }, 1800); } });
+    b.appendChild(c);
   });
-  const n = Object.keys(S.discovered).length;
-  speak(n ? 'Twoje naklejki! Dotknij dinozaura.' : 'Album jest pusty. Wykop pierwszego dinozaura!', 300);
+  const k = Object.keys(S.discovered).length;
+  guide(k ? 'Brawo! Zbieraj dinozaury.' : 'Album jest pusty. Wykop pierwszego dinozaura!', {delay:300});
 };
 
-/* ---------- E8 PANEL RODZICA ---------- */
+/* ---------- E8 PANEL RODZICA (przytrzymaj tytuł 3 s) ---------- */
 let holdTimer = null, parentFrom = 'start';
-$$('.corner').forEach(c => { c.addEventListener('pointerdown', e => { e.stopPropagation(); holdTimer = setTimeout(()=>{ SFX.chime(); parentFrom = cur; go('parent'); }, 3000); }); ['pointerup','pointerleave','pointercancel'].forEach(t => c.addEventListener(t, ()=>clearTimeout(holdTimer))); });
+const titleEl = $('#title-start');
+titleEl.addEventListener('pointerdown', e => { e.stopPropagation(); holdTimer = setTimeout(()=>{ SFX.chime(); parentFrom = cur; go('parent'); }, 3000); });
+['pointerup','pointerleave','pointercancel'].forEach(t => titleEl.addEventListener(t, ()=>clearTimeout(holdTimer)));
 ENTER.parent = () => {
   $$('#s-parent .sw').forEach(sw => sw.classList.toggle('on', !!S.settings[sw.dataset.set]));
   $('#child-name').textContent = S.name; $('#parent-progress').textContent = `${Object.keys(S.discovered).length} z ${DINOS.length}`;
-  $('#parent-dev').textContent = `Dino Odkrywca v${VERSION} · lektor: ${VOICE ? VOICE.name : 'brak polskiego głosu'} · własne obrazki: ${Object.values(HAVE).filter(Boolean).length}/${ASSET_NAMES.length}`;
+  $('#parent-dev').textContent = `Dino Odkrywca v${VERSION} · lektor: ${VOICE ? VOICE.name : 'brak polskiego głosu'} · obrazki: ${Object.values(HAVE).filter(Boolean).length}/${ASSET_NAMES.length}`;
 };
 $$('#s-parent .sw').forEach(sw => sw.addEventListener('click', () => { S.settings[sw.dataset.set] = !S.settings[sw.dataset.set]; sw.classList.toggle('on'); save(); applyAudioSettings(); if(!S.settings.voice) hush(); }));
 $('#parent-close').addEventListener('click', () => go(parentFrom === 'parent' ? 'start' : parentFrom));
@@ -986,7 +1105,7 @@ $('#btn-reset').addEventListener('click', function(){ if(!resetArmed){ resetArme
 $('#btn-name').addEventListener('click', function(){ const row = this.parentElement; if(row.querySelector('input')) return; const inp = el('input'); inp.value = S.name; inp.style.cssText='font:inherit;font-size:20px;padding:6px 10px;border:2px solid #c9d1c3;border-radius:10px;margin-right:8px;width:180px'; const ok = el('button','', 'OK'); row.insertBefore(inp, this); row.insertBefore(ok, this); this.style.display='none'; inp.focus(); ok.addEventListener('click', ()=>{ S.name = inp.value.trim() || 'Piotruś'; save(); inp.remove(); ok.remove(); this.style.display=''; ENTER.parent(); }); });
 
 /* ---------- START ---------- */
-probeAssets().then(() => { applyBackgrounds(); ENTER.start(); scheduleHint(); });
+probeAssets().then(() => { applyBackgrounds(); $$('.kostek[data-pose]').forEach(k => kostekInto(k, k.dataset.pose)); ENTER.start(); scheduleHint(); });
 if('serviceWorker' in navigator && location.protocol !== 'file:'){ addEventListener('load', () => navigator.serviceWorker.register('sw.js').catch(()=>{})); }
 document.addEventListener('contextmenu', e => e.preventDefault());
 document.addEventListener('gesturestart', e => e.preventDefault());
