@@ -1,0 +1,16 @@
+{
+  "name": "Dino Odkrywca",
+  "short_name": "Dino",
+  "description": "Wykopaliska i dinozaury dla najmłodszych odkrywców.",
+  "lang": "pl",
+  "start_url": "./index.html",
+  "scope": "./",
+  "display": "fullscreen",
+  "orientation": "landscape",
+  "background_color": "#8FD3E8",
+  "theme_color": "#2F9E5B",
+  "icons": [
+    { "src": "icons/icon-192.png", "sizes": "192x192", "type": "image/png" },
+    { "src": "icons/icon-512.png", "sizes": "512x512", "type": "image/png", "purpose": "any maskable" }
+  ]
+}

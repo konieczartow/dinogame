@@ -1,0 +1,1 @@
+Tu wrzuć obrazki z PROMPTS.md (np. bg_start.jpg, trex_idle.png). Brakujące pliki apka zastępuje rysunkami SVG.
